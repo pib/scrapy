@@ -55,7 +55,7 @@ if root_dir != '':
     os.chdir(root_dir)
 
 def is_not_module(filename):
-    return os.path.splitext(f)[1] not in ['.py', '.pyc', '.pyo']
+    return os.path.splitext(filename)[1] not in ['.py', '.pyc', '.pyo']
 
 for scrapy_dir in ['scrapy']:
     for dirpath, dirnames, filenames in os.walk(scrapy_dir):
@@ -102,6 +102,7 @@ setup_args = {
     'cmdclass': cmdclasses,
     'data_files': data_files,
     'scripts': scripts,
+    'use_2to3': True,
     'classifiers': [
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
