@@ -11,8 +11,12 @@ import inspect
 import weakref
 import errno
 from functools import wraps
-from sgmllib import SGMLParser
-
+try:
+    from sgmllib import SGMLParser
+except ImportError:
+    # Python 3 removed sgmllib, so stub this out
+    class SGMLParser:
+        pass
 
 class FixedSGMLParser(SGMLParser):
     """The SGMLParser that comes with Python has a bug in the convert_charref()

@@ -36,8 +36,8 @@ __version__ = "$Revision: 1.1.1.1 $"[11:-2]
 try:
 	True
 except NameError:
-	True = 1==1
-	False = 1==0
+	globals()['True'] = 1==1
+	globals()['False'] = 1==0
 
 class _Parameter:
 	"""Used to represent default parameter values."""

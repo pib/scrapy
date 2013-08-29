@@ -2,7 +2,7 @@
 Scrapy - a screen scraping framework written in Python
 """
 import pkgutil
-__version__ = pkgutil.get_data(__package__, 'VERSION').strip()
+__version__ = pkgutil.get_data(__package__, 'VERSION').strip().decode('utf8')
 version_info = tuple(__version__.split('.')[:3])
 
 import sys, os, warnings

@@ -5,7 +5,13 @@ See documentation in docs/topics/item.rst
 """
 
 from pprint import pformat
-from UserDict import DictMixin
+try:
+    from UserDict import DictMixin
+    meta_super = type
+except ImportError:
+    from collections import MutableMapping as DictMixin
+    from abc import ABCMeta
+    meta_super = ABCMeta
 
 from scrapy.utils.trackref import object_ref
 
@@ -19,7 +25,7 @@ class Field(dict):
     """Container of field metadata"""
 
 
-class ItemMeta(type):
+class ItemMeta(meta_super):
 
     def __new__(mcs, class_name, bases, attrs):
         fields = {}
