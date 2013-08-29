@@ -1,6 +1,6 @@
 pyOpenSSL
 lxml
 twisted
-boto
+git+https://github.com/boto/boto.git@py3kport#egg=boto-2.9.4-dev
 Pillow
 django

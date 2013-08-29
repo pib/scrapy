@@ -102,6 +102,9 @@ setup_args = {
     'cmdclass': cmdclasses,
     'data_files': data_files,
     'scripts': scripts,
+    'dependency_links': [
+        'git+https://github.com/pib/w3lib.git@python3#egg=w3lib-1.3'
+    ],
     'classifiers': [
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
