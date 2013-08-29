@@ -14,11 +14,11 @@ class DownloadHandlers(object):
         self._notconfigured = {}
         handlers = crawler.settings.get('DOWNLOAD_HANDLERS_BASE')
         handlers.update(crawler.settings.get('DOWNLOAD_HANDLERS', {}))
-        for scheme, clspath in handlers.iteritems():
+        for scheme, clspath in handlers.items():
             cls = load_object(clspath)
             try:
                 dh = cls(crawler.settings)
-            except NotConfigured, ex:
+            except NotConfigured as ex:
                 self._notconfigured[scheme] = str(ex)
             else:
                 self._handlers[scheme] = dh
@@ -37,6 +37,6 @@ class DownloadHandlers(object):
 
     @defer.inlineCallbacks
     def _close(self, *_a, **_kw):
-        for dh in self._handlers.values():
+        for dh in list(self._handlers.values()):
             if hasattr(dh, 'close'):
                 yield dh.close()

@@ -46,7 +46,7 @@ class MultiValueDict(dict):
         try:
             list_ = dict.__getitem__(self, key)
         except KeyError:
-            raise MultiValueDictKeyError, "Key %r not found in %r" % (key, self)
+            raise MultiValueDictKeyError("Key %r not found in %r" % (key, self))
         try:
             return list_[-1]
         except IndexError:
@@ -107,7 +107,7 @@ class MultiValueDict(dict):
         Returns a list of (key, value) pairs, where value is the last item in
         the list associated with the key.
         """
-        return [(key, self[key]) for key in self.keys()]
+        return [(key, self[key]) for key in list(self.keys())]
 
     def lists(self):
         "Returns a list of (key, list) pairs."
@@ -115,7 +115,7 @@ class MultiValueDict(dict):
 
     def values(self):
         "Returns a list of the last value on every key list."
-        return [self[key] for key in self.keys()]
+        return [self[key] for key in list(self.keys())]
 
     def copy(self):
         "Returns a copy of this object."
@@ -124,7 +124,7 @@ class MultiValueDict(dict):
     def update(self, *args, **kwargs):
         "update() extends rather than replaces existing key lists. Also accepts keyword args."
         if len(args) > 1:
-            raise TypeError, "update expected at most 1 arguments, got %d" % len(args)
+            raise TypeError("update expected at most 1 arguments, got %d" % len(args))
         if args:
             other_dict = args[0]
             if isinstance(other_dict, MultiValueDict):
@@ -132,11 +132,11 @@ class MultiValueDict(dict):
                     self.setlistdefault(key, []).extend(value_list)
             else:
                 try:
-                    for key, value in other_dict.items():
+                    for key, value in list(other_dict.items()):
                         self.setlistdefault(key, []).append(value)
                 except TypeError:
-                    raise ValueError, "MultiValueDict.update() takes either a MultiValueDict or dictionary"
-        for key, value in kwargs.iteritems():
+                    raise ValueError("MultiValueDict.update() takes either a MultiValueDict or dictionary")
+        for key, value in kwargs.items():
             self.setlistdefault(key, []).append(value)
 
 class SiteNode(object):
@@ -203,7 +203,7 @@ class CaselessDict(dict):
         return dict.setdefault(self, self.normkey(key), self.normvalue(def_val))
 
     def update(self, seq):
-        seq = seq.iteritems() if isinstance(seq, dict) else seq
+        seq = iter(seq.items()) if isinstance(seq, dict) else seq
         iseq = ((self.normkey(k), self.normvalue(v)) for k, v in seq)
         super(CaselessDict, self).update(iseq)
 
@@ -245,14 +245,14 @@ class MergeDict(object):
 
     def getlist(self, key):
         for dict_ in self.dicts:
-            if key in dict_.keys():
+            if key in list(dict_.keys()):
                 return dict_.getlist(key)
         return []
 
     def items(self):
         item_list = []
         for dict_ in self.dicts:
-            item_list.extend(dict_.items())
+            item_list.extend(list(dict_.items()))
         return item_list
 
     def has_key(self, key):

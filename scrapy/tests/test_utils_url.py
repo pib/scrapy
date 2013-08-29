@@ -72,7 +72,7 @@ class UrlUtilsTest(unittest.TestCase):
                                           "http://www.example.com/")
 
         # always return a str
-        assert isinstance(canonicalize_url(u"http://www.example.com"), str)
+        assert isinstance(canonicalize_url("http://www.example.com"), str)
 
         # append missing path
         self.assertEqual(canonicalize_url("http://www.example.com"),
@@ -99,7 +99,7 @@ class UrlUtilsTest(unittest.TestCase):
         self.assertEqual(canonicalize_url("http://www.example.com/do?b=&c&a=2"),
                                           "http://www.example.com/do?a=2&b=&c=")
 
-        self.assertEqual(canonicalize_url(u'http://www.example.com/do?1750,4'),
+        self.assertEqual(canonicalize_url('http://www.example.com/do?1750,4'),
                                            'http://www.example.com/do?1750%2C4=')
 
         # spaces
@@ -125,22 +125,22 @@ class UrlUtilsTest(unittest.TestCase):
         self.assertEqual(canonicalize_url("http://www.example.com/a do\xc2\xa3.html?a=1"),
                                           "http://www.example.com/a%20do%C2%A3.html?a=1")
         # non-ASCII percent-encoding in query arguments
-        self.assertEqual(canonicalize_url(u"http://www.example.com/do?price=\xa3500&a=5&z=3"),
-                                          u"http://www.example.com/do?a=5&price=%C2%A3500&z=3")
+        self.assertEqual(canonicalize_url("http://www.example.com/do?price=\xa3500&a=5&z=3"),
+                                          "http://www.example.com/do?a=5&price=%C2%A3500&z=3")
         self.assertEqual(canonicalize_url("http://www.example.com/do?price=\xc2\xa3500&a=5&z=3"),
                                           "http://www.example.com/do?a=5&price=%C2%A3500&z=3")
         self.assertEqual(canonicalize_url("http://www.example.com/do?price(\xc2\xa3)=500&a=1"),
                                           "http://www.example.com/do?a=1&price%28%C2%A3%29=500")
 
         # urls containing auth and ports
-        self.assertEqual(canonicalize_url(u"http://user:pass@www.example.com:81/do?now=1"),
-                                          u"http://user:pass@www.example.com:81/do?now=1")
+        self.assertEqual(canonicalize_url("http://user:pass@www.example.com:81/do?now=1"),
+                                          "http://user:pass@www.example.com:81/do?now=1")
 
         # remove fragments
-        self.assertEqual(canonicalize_url(u"http://user:pass@www.example.com/do?a=1#frag"),
-                                          u"http://user:pass@www.example.com/do?a=1")
-        self.assertEqual(canonicalize_url(u"http://user:pass@www.example.com/do?a=1#frag", keep_fragments=True),
-                                          u"http://user:pass@www.example.com/do?a=1#frag")
+        self.assertEqual(canonicalize_url("http://user:pass@www.example.com/do?a=1#frag"),
+                                          "http://user:pass@www.example.com/do?a=1")
+        self.assertEqual(canonicalize_url("http://user:pass@www.example.com/do?a=1#frag", keep_fragments=True),
+                                          "http://user:pass@www.example.com/do?a=1#frag")
 
         # dont convert safe characters to percent encoding representation
         self.assertEqual(canonicalize_url(
@@ -152,7 +152,7 @@ class UrlUtilsTest(unittest.TestCase):
         # percent-encoded as utf-8, that's why canonicalize_url must always
         # convert the urls to string. the following test asserts that
         # functionality.
-        self.assertEqual(canonicalize_url(u'http://www.example.com/caf%E9-con-leche.htm'),
+        self.assertEqual(canonicalize_url('http://www.example.com/caf%E9-con-leche.htm'),
                                            'http://www.example.com/caf%E9-con-leche.htm')
 
         # domains are case insensitive

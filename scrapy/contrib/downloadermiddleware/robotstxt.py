@@ -4,7 +4,7 @@ enable this middleware and enable the ROBOTSTXT_OBEY setting.
 
 """
 
-import robotparser
+import urllib.robotparser
 
 from scrapy import signals, log
 from scrapy.exceptions import NotConfigured, IgnoreRequest
@@ -50,7 +50,7 @@ class RobotsTxtMiddleware(object):
         return self._parsers[netloc]
 
     def _parse_robots(self, response):
-        rp = robotparser.RobotFileParser(response.url)
+        rp = urllib.robotparser.RobotFileParser(response.url)
         rp.parse(response.body.splitlines())
         self._parsers[urlparse_cached(response).netloc] = rp
 

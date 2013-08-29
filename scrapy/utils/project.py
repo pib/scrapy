@@ -1,6 +1,6 @@
 import os
 from os.path import join, dirname, abspath, isabs, exists
-import cPickle as pickle
+import pickle as pickle
 import warnings
 
 from scrapy.utils.conf import closest_scrapy_cfg, get_config, init_env
@@ -63,7 +63,7 @@ def get_project_settings():
     settings.overrides = pickle.loads(pickled_settings) if pickled_settings else {}
 
     # XXX: deprecate and remove this functionality
-    for k, v in os.environ.items():
+    for k, v in list(os.environ.items()):
         if k.startswith('SCRAPY_'):
             settings.overrides[k[7:]] = v
 

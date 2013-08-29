@@ -1,7 +1,7 @@
 import base64
-from urllib import getproxies, unquote, proxy_bypass
+from urllib.parse import unquote
 from urllib2 import _parse_proxy
-from urlparse import urlunparse
+from urllib.parse import urlunparse
 
 from scrapy.utils.httpobj import urlparse_cached
 from scrapy.exceptions import NotConfigured
@@ -11,7 +11,7 @@ class HttpProxyMiddleware(object):
 
     def __init__(self):
         self.proxies = {}
-        for type, url in getproxies().items():
+        for type, url in list(getproxies().items()):
             self.proxies[type] = self._get_proxy(url, type)
 
         if not self.proxies:

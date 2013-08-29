@@ -2,22 +2,23 @@
 HTMLParser-based link extractor
 """
 
-from HTMLParser import HTMLParser
-from urlparse import urljoin
+from html.parser import HTMLParser
+from urllib.parse import urljoin
 
 from w3lib.url import safe_url_string
 
 from scrapy.link import Link
 from scrapy.utils.python import unique as unique_list
+import collections
 
 class HtmlParserLinkExtractor(HTMLParser):
 
     def __init__(self, tag="a", attr="href", process=None, unique=False):
         HTMLParser.__init__(self)
 
-        self.scan_tag = tag if callable(tag) else lambda t: t == tag
-        self.scan_attr = attr if callable(attr) else lambda a: a == attr
-        self.process_attr = process if callable(process) else lambda v: v
+        self.scan_tag = tag if isinstance(tag, collections.Callable) else lambda t: t == tag
+        self.scan_attr = attr if isinstance(attr, collections.Callable) else lambda a: a == attr
+        self.process_attr = process if isinstance(process, collections.Callable) else lambda v: v
         self.unique = unique
 
     def _extract_links(self, response_text, response_url, response_encoding):
@@ -30,7 +31,7 @@ class HtmlParserLinkExtractor(HTMLParser):
         ret = []
         base_url = urljoin(response_url, self.base_url) if self.base_url else response_url
         for link in links:
-            if isinstance(link.url, unicode):
+            if isinstance(link.url, str):
                 link.url = link.url.encode(response_encoding)
             link.url = urljoin(base_url, link.url)
             link.url = safe_url_string(link.url, response_encoding)

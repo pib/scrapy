@@ -25,7 +25,7 @@ Internal attributes:
 		deletion, (considerably speeds up the cleanup process
 		vs. the original code.)
 """
-from __future__ import generators
+
 import types, weakref
 from scrapy.xlib.pydispatch import saferef, robustapply, errors
 
@@ -140,7 +140,7 @@ def connect(receiver, signal=Any, sender=Any, weak=True):
 	if weak:
 		receiver = saferef.safeRef(receiver, onDelete=_removeReceiver)
 	senderkey = id(sender)
-	if connections.has_key(senderkey):
+	if senderkey in connections:
 		signals = connections[senderkey]
 	else:
 		connections[senderkey] = signals = {}
@@ -160,7 +160,7 @@ def connect(receiver, signal=Any, sender=Any, weak=True):
 	receiverID = id(receiver)
 	# get current set, remove any current references to
 	# this receiver in the set, including back-references
-	if signals.has_key(signal):
+	if signal in signals:
 		receivers = signals[signal]
 		_removeOldBackRefs(senderkey, signal, receiver, receivers)
 	else:
@@ -296,7 +296,7 @@ def getAllReceivers( sender = Any, signal = Any ):
 		for receiver in set:
 			if receiver: # filter out dead instance-method weakrefs
 				try:
-					if not receivers.has_key( receiver ):
+					if receiver not in receivers:
 						receivers[receiver] = 1
 						yield receiver
 				except TypeError:
@@ -379,13 +379,13 @@ def _removeReceiver(receiver):
 	backKey = id(receiver)
 	try:
 		backSet = sendersBack.pop(backKey)
-	except KeyError, err:
+	except KeyError as err:
 		return False 
 	else:
 		for senderkey in backSet:
 			try:
-				signals = connections[senderkey].keys()
-			except KeyError,err:
+				signals = list(connections[senderkey].keys())
+			except KeyError as err:
 				pass
 			else:
 				for signal in signals:
@@ -396,7 +396,7 @@ def _removeReceiver(receiver):
 					else:
 						try:
 							receivers.remove( receiver )
-						except Exception, err:
+						except Exception as err:
 							pass
 					_cleanupConnections(senderkey, signal)
 
@@ -441,7 +441,7 @@ def _removeBackrefs( senderkey):
 	except KeyError:
 		signals = None
 	else:
-		items = signals.items()
+		items = list(signals.items())
 		def allReceivers( ):
 			for signal,set in items:
 				for item in set:
@@ -469,7 +469,7 @@ def _removeOldBackRefs(senderkey, signal, receiver, receivers):
 		found = 0
 		signals = connections.get(signal)
 		if signals is not None:
-			for sig,recs in connections.get(signal,{}).iteritems():
+			for sig,recs in connections.get(signal,{}).items():
 				if sig != signal:
 					for rec in recs:
 						if rec is oldReceiver:

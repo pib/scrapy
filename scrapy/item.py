@@ -30,7 +30,7 @@ class ItemMeta(meta_super):
     def __new__(mcs, class_name, bases, attrs):
         fields = {}
         new_attrs = {}
-        for n, v in attrs.iteritems():
+        for n, v in attrs.items():
             if isinstance(v, Field):
                 fields[n] = v
             else:
@@ -49,7 +49,7 @@ class DictItem(DictMixin, BaseItem):
     def __init__(self, *args, **kwargs):
         self._values = {}
         if args or kwargs:  # avoid creating dict for most common case
-            for k, v in dict(*args, **kwargs).iteritems():
+            for k, v in dict(*args, **kwargs).items():
                 self[k] = v
 
     def __getitem__(self, key):
@@ -77,7 +77,7 @@ class DictItem(DictMixin, BaseItem):
         super(DictItem, self).__setattr__(name, value)
 
     def keys(self):
-        return self._values.keys()
+        return list(self._values.keys())
 
     def __repr__(self):
         return pformat(dict(self))
@@ -86,6 +86,6 @@ class DictItem(DictMixin, BaseItem):
         return self.__class__(self)
 
 
-class Item(DictItem):
+class Item(DictItem, metaclass=ItemMeta):
 
-    __metaclass__ = ItemMeta
+    pass

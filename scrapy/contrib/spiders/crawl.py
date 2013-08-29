@@ -10,6 +10,7 @@ import copy
 from scrapy.http import Request, HtmlResponse
 from scrapy.utils.spider import iterate_spider_output
 from scrapy.spider import BaseSpider
+import collections
 
 def identity(x):
     return x
@@ -75,9 +76,9 @@ class CrawlSpider(BaseSpider):
 
     def _compile_rules(self):
         def get_method(method):
-            if callable(method):
+            if isinstance(method, collections.Callable):
                 return method
-            elif isinstance(method, basestring):
+            elif isinstance(method, str):
                 return getattr(self, method, None)
 
         self._rules = [copy.copy(r) for r in self.rules]

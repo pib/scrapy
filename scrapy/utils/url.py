@@ -5,8 +5,8 @@ library.
 Some of the functions that used to be imported from this module have been moved
 to the w3lib.url module. Always import those from there instead.
 """
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
 import cgi
 
 from w3lib.url import *
@@ -54,24 +54,24 @@ def canonicalize_url(url, keep_blank_values=True, keep_fragments=False,
     scheme, netloc, path, params, query, fragment = parse_url(url)
     keyvals = cgi.parse_qsl(query, keep_blank_values)
     keyvals.sort()
-    query = urllib.urlencode(keyvals)
+    query = urllib.parse.urlencode(keyvals)
     path = safe_url_string(_unquotepath(path)) or '/'
     fragment = '' if not keep_fragments else fragment
-    return urlparse.urlunparse((scheme, netloc.lower(), path, params, query, fragment))
+    return urllib.parse.urlunparse((scheme, netloc.lower(), path, params, query, fragment))
 
 
 def _unquotepath(path):
     for reserved in ('2f', '2F', '3f', '3F'):
         path = path.replace('%' + reserved, '%25' + reserved.upper())
-    return urllib.unquote(path)
+    return urllib.parse.unquote(path)
 
 
 def parse_url(url, encoding=None):
     """Return urlparsed url from the given argument (which could be an already
     parsed url)
     """
-    return url if isinstance(url, urlparse.ParseResult) else \
-        urlparse.urlparse(unicode_to_str(url, encoding))
+    return url if isinstance(url, urllib.parse.ParseResult) else \
+        urllib.parse.urlparse(unicode_to_str(url, encoding))
 
 
 def escape_ajax(url):
@@ -97,7 +97,7 @@ def escape_ajax(url):
     >>> escape_ajax("www.example.com/ajax.html")
     'www.example.com/ajax.html'
     """
-    defrag, frag = urlparse.urldefrag(url)
+    defrag, frag = urllib.parse.urldefrag(url)
     if not frag.startswith('!'):
         return url
     return add_or_replace_parameter(defrag, '_escaped_fragment_', frag[1:])

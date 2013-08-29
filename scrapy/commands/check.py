@@ -9,6 +9,7 @@ from scrapy.utils.misc import load_object
 from scrapy.utils.spider import iterate_spider_output
 from scrapy.utils.conf import build_component_list
 from scrapy.xlib.pydispatch import dispatcher
+import collections
 
 
 def _generate(cb):
@@ -62,10 +63,10 @@ class Command(ScrapyCommand):
 
         # start checks
         if opts.list:
-            for spider, methods in sorted(contract_reqs.iteritems()):
-                print spider
+            for spider, methods in sorted(contract_reqs.items()):
+                print(spider)
                 for method in sorted(methods):
-                    print '  * %s' % method
+                    print('  * %s' % method)
         else:
             dispatcher.connect(self.results.printErrors,
                     signals.engine_stopped)
@@ -74,8 +75,8 @@ class Command(ScrapyCommand):
     def get_requests(self, spider):
         requests = []
 
-        for key, value in vars(type(spider)).items():
-            if callable(value) and value.__doc__:
+        for key, value in list(vars(type(spider)).items()):
+            if isinstance(value, collections.Callable) and value.__doc__:
                 bound_method = value.__get__(spider, type(spider))
                 request = self.conman.from_method(bound_method, self.results)
 

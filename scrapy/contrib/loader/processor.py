@@ -65,7 +65,7 @@ class Identity(object):
 
 class Join(object):
 
-    def __init__(self, separator=u' '):
+    def __init__(self, separator=' '):
         self.separator = separator
 
     def __call__(self, values):

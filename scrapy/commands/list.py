@@ -10,4 +10,4 @@ class Command(ScrapyCommand):
 
     def run(self, args, opts):
         for s in self.crawler.spiders.list():
-            print s
+            print(s)

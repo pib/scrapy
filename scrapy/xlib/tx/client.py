@@ -6,13 +6,13 @@
 HTTP client.
 """
 
-from __future__ import division, absolute_import
+
 
 import os
 
 try:
-    from urlparse import urlunparse
-    from urllib import splithost, splittype
+    from urllib.parse import urlunparse
+    from urllib.parse import splithost, splittype
 except ImportError:
     from urllib.parse import splithost, splittype
     from urllib.parse import urlunparse as _urlunparse
@@ -525,11 +525,11 @@ class HTTPConnectionPool(object):
             closed.
         """
         results = []
-        for protocols in self._connections.itervalues():
+        for protocols in self._connections.values():
             for p in protocols:
                 results.append(p.abort())
         self._connections = {}
-        for dc in self._timeouts.values():
+        for dc in list(self._timeouts.values()):
             dc.cancel()
         self._timeouts = {}
         return defer.gatherResults(results).addCallback(lambda ign: None)

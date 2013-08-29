@@ -37,7 +37,7 @@ def assert_aws_environ():
     """
     try:
         import boto
-    except ImportError, e:
+    except ImportError as e:
         raise SkipTest(str(e))
 
     if 'AWS_ACCESS_KEY_ID' not in os.environ:
@@ -55,7 +55,7 @@ def get_crawler(settings_dict=None):
         pass
     settings_module = SettingsModuleMock()
     if settings_dict:
-        for k, v in settings_dict.items():
+        for k, v in list(settings_dict.items()):
             setattr(settings_module, k, v)
     settings = CrawlerSettings(settings_module)
     return Crawler(settings)

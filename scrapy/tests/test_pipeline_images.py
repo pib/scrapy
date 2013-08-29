@@ -1,15 +1,16 @@
 import os
-from cStringIO import StringIO
+from io import StringIO
 from tempfile import mkdtemp
 from shutil import rmtree
 
 from twisted.trial import unittest
+import collections
 
 
 skip = False
 try:
     from PIL import Image
-except ImportError, e:
+except ImportError as e:
     skip = 'Missing Python Imaging Library, install https://pypi.python.org/pypi/Pillow'
 else:
     encoders = set(('jpeg_encoder', 'jpeg_decoder'))
@@ -18,7 +19,7 @@ else:
 
 def _mocked_download_func(request, info):
     response = request.meta.get('response')
-    return response() if callable(response) else response
+    return response() if isinstance(response, collections.Callable) else response
 
 
 class ImagesPipelineTestCase(unittest.TestCase):

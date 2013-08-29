@@ -1,5 +1,5 @@
 from time import time
-from urlparse import urlparse, urlunparse, urldefrag
+from urllib.parse import urlparse, urlunparse, urldefrag
 
 from twisted.internet.ssl import ClientContextFactory
 from twisted.web.client import HTTPClientFactory
@@ -39,7 +39,7 @@ class ScrapyHTTPPageGetter(HTTPClient):
         # Method command
         self.sendCommand(self.factory.method, self.factory.path)
         # Headers
-        for key, values in self.factory.headers.items():
+        for key, values in list(self.factory.headers.items()):
             for value in values:
                 self.sendHeader(key, value)
         self.endHeaders()

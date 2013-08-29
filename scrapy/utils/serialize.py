@@ -46,7 +46,7 @@ class SpiderReferencer(object):
             return self.get_reference_from_spider(obj)
         elif isinstance(obj, dict):
             d = {}
-            for k, v in obj.items():
+            for k, v in list(obj.items()):
                 k = self.encode_references(k)
                 v = self.encode_references(v)
                 d[k] = v
@@ -58,11 +58,11 @@ class SpiderReferencer(object):
 
     def decode_references(self, obj):
         """Look for spider references and replace them with Spider objects"""
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             return self.get_spider_from_reference(obj)
         elif isinstance(obj, dict):
             d = {}
-            for k, v in obj.items():
+            for k, v in list(obj.items()):
                 k = self.decode_references(k)
                 v = self.decode_references(v)
                 d[k] = v

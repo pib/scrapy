@@ -55,7 +55,7 @@ class LinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://www.example.com", body=html, encoding='utf-8')
         lx = BaseSgmlLinkExtractor()
         self.assertEqual(lx.extract_links(response), [
-            Link(url='http://www.example.com/item/12.html', text=u'Wrong: \ufffd'),
+            Link(url='http://www.example.com/item/12.html', text='Wrong: \ufffd'),
         ])
 
     def test_extraction_encoding(self):
@@ -97,8 +97,8 @@ class LinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://example.org/page.html", body=html)
         lx = SgmlLinkExtractor()
         self.assertEqual([link for link in lx.extract_links(response)], [
-            Link(url='http://example.org/page.html?action=print', text=u'Printer-friendly page', nofollow=True),
-            Link(url='http://example.org/about.html', text=u'About us', nofollow=False),
+            Link(url='http://example.org/page.html?action=print', text='Printer-friendly page', nofollow=True),
+            Link(url='http://example.org/about.html', text='About us', nofollow=False),
         ])
 
 
@@ -117,43 +117,43 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
 
         lx = SgmlLinkExtractor()
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 text'),
-            Link(url='http://www.google.com/something', text=u''),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
+            Link(url='http://example.com/sample3.html', text='sample 3 text'),
+            Link(url='http://www.google.com/something', text=''),
         ])
 
         lx = SgmlLinkExtractor(allow=('sample', ))
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 text'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
+            Link(url='http://example.com/sample3.html', text='sample 3 text'),
         ])
 
         lx = SgmlLinkExtractor(allow=('sample', ), unique=False)
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 text'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 repetition'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
+            Link(url='http://example.com/sample3.html', text='sample 3 text'),
+            Link(url='http://example.com/sample3.html', text='sample 3 repetition'),
         ])
 
         lx = SgmlLinkExtractor(allow=('sample', ))
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 text'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
+            Link(url='http://example.com/sample3.html', text='sample 3 text'),
         ])
 
         lx = SgmlLinkExtractor(allow=('sample', ), deny=('3', ))
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
         ])
 
         lx = SgmlLinkExtractor(allow_domains=('google.com', ))
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://www.google.com/something', text=u''),
+            Link(url='http://www.google.com/something', text=''),
         ])
 
     def test_extraction_using_single_values(self):
@@ -161,25 +161,25 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
 
         lx = SgmlLinkExtractor(allow='sample')
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
-            Link(url='http://example.com/sample3.html', text=u'sample 3 text'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
+            Link(url='http://example.com/sample3.html', text='sample 3 text'),
         ])
 
         lx = SgmlLinkExtractor(allow='sample', deny='3')
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
         ])
 
         lx = SgmlLinkExtractor(allow_domains='google.com')
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://www.google.com/something', text=u''),
+            Link(url='http://www.google.com/something', text=''),
         ])
 
         lx = SgmlLinkExtractor(deny_domains='example.com')
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://www.google.com/something', text=u''),
+            Link(url='http://www.google.com/something', text=''),
         ])
 
     def test_matches(self):
@@ -213,8 +213,8 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
     def test_restrict_xpaths(self):
         lx = SgmlLinkExtractor(restrict_xpaths=('//div[@id="subwrapper"]', ))
         self.assertEqual([link for link in lx.extract_links(self.response)], [
-            Link(url='http://example.com/sample1.html', text=u''),
-            Link(url='http://example.com/sample2.html', text=u'sample 2'),
+            Link(url='http://example.com/sample1.html', text=''),
+            Link(url='http://example.com/sample2.html', text='sample 2'),
         ])
 
     def test_restrict_xpaths_encoding(self):
@@ -232,7 +232,7 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
 
         lx = SgmlLinkExtractor(restrict_xpaths="//div[@class='links']")
         self.assertEqual(lx.extract_links(response),
-                         [Link(url='http://example.org/about.html', text=u'About us\xa3')])
+                         [Link(url='http://example.org/about.html', text='About us\xa3')])
 
     def test_restrict_xpaths_concat_in_handle_data(self):
         """html entities cause SGMLParser to call handle_data hook twice"""
@@ -240,7 +240,7 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://example.org", body=body, encoding='gb18030')
         lx = SgmlLinkExtractor(restrict_xpaths="//div")
         self.assertEqual(lx.extract_links(response),
-                         [Link(url='http://example.org/foo', text=u'>\u4eac<\u4e1c',
+                         [Link(url='http://example.org/foo', text='>\u4eac<\u4e1c',
                                fragment='', nofollow=False)])
 
     def test_encoded_url(self):
@@ -248,7 +248,7 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://known.fm/AC%2FDC/", body=body, encoding='utf8')
         lx = SgmlLinkExtractor()
         self.assertEqual(lx.extract_links(response), [
-            Link(url='http://known.fm/AC%2FDC/?page=2', text=u'BinB', fragment='', nofollow=False),
+            Link(url='http://known.fm/AC%2FDC/?page=2', text='BinB', fragment='', nofollow=False),
         ])
 
     def test_encoded_url_in_restricted_xpath(self):
@@ -256,7 +256,7 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://known.fm/AC%2FDC/", body=body, encoding='utf8')
         lx = SgmlLinkExtractor(restrict_xpaths="//div")
         self.assertEqual(lx.extract_links(response), [
-            Link(url='http://known.fm/AC%2FDC/?page=2', text=u'BinB', fragment='', nofollow=False),
+            Link(url='http://known.fm/AC%2FDC/?page=2', text='BinB', fragment='', nofollow=False),
         ])
 
     def test_deny_extensions(self):
@@ -264,7 +264,7 @@ class SgmlLinkExtractorTestCase(unittest.TestCase):
         response = HtmlResponse("http://example.org/", body=html)
         lx = SgmlLinkExtractor()
         self.assertEqual(lx.extract_links(response), [
-            Link(url='http://example.org/page.html', text=u'asd'),
+            Link(url='http://example.org/page.html', text='asd'),
         ])
 
     def test_process_value(self):

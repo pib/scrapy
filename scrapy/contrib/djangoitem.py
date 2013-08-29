@@ -21,9 +21,7 @@ class DjangoItemMeta(ItemMeta):
         return cls
 
 
-class DjangoItem(Item):
-
-    __metaclass__ = DjangoItemMeta
+class DjangoItem(Item, metaclass=DjangoItemMeta):
 
     django_model = None
 
@@ -51,12 +49,12 @@ class DjangoItem(Item):
 
         try:
             self.instance.clean_fields(exclude=exclude)
-        except ValidationError, e:
+        except ValidationError as e:
             self._errors = e.update_error_dict(self._errors)
 
         try:
             self.instance.clean()
-        except ValidationError, e:
+        except ValidationError as e:
             self._errors = e.update_error_dict(self._errors)
 
         # uniqueness is not checked, because it is faster to check it when

@@ -26,11 +26,11 @@ class Libxml2XPathSelectorTestCase(test_selector.XPathSelectorTestCase):
     def test_null_bytes(self):
         hxs = HtmlXPathSelector(text='<root>la\x00la</root>')
         self.assertEqual(hxs.extract(),
-                         u'<html><body><root>lala</root></body></html>')
+                         '<html><body><root>lala</root></body></html>')
 
         xxs = XmlXPathSelector(text='<root>la\x00la</root>')
         self.assertEqual(xxs.extract(),
-                         u'<root>lala</root>')
+                         '<root>lala</root>')
 
     @libxml2debug
     def test_unquote(self):
@@ -45,23 +45,23 @@ class Libxml2XPathSelectorTestCase(test_selector.XPathSelectorTestCase):
             '</root>'))
         xxs = XmlXPathSelector(text=xmldoc)
 
-        self.assertEqual(xxs.extract_unquoted(), u'')
+        self.assertEqual(xxs.extract_unquoted(), '')
 
-        self.assertEqual(xxs.select('/root').extract_unquoted(), [u''])
+        self.assertEqual(xxs.select('/root').extract_unquoted(), [''])
         self.assertEqual(xxs.select('/root/text()').extract_unquoted(), [
-            u'\n  lala\n  ',
-            u'\n  pff\n'])
+            '\n  lala\n  ',
+            '\n  pff\n'])
 
-        self.assertEqual(xxs.select('//*').extract_unquoted(), [u'', u'', u''])
+        self.assertEqual(xxs.select('//*').extract_unquoted(), ['', '', ''])
         self.assertEqual(xxs.select('//text()').extract_unquoted(), [
-            u'\n  lala\n  ',
-            u'\n    blabla&more',
-            u'a',
-            u'test',
-            u'oh\n    ',
-            u'lalalal&ppppp<b>PPPP</b>ppp&amp;la',
-            u'\n  ',
-            u'\n  pff\n'])
+            '\n  lala\n  ',
+            '\n    blabla&more',
+            'a',
+            'test',
+            'oh\n    ',
+            'lalalal&ppppp<b>PPPP</b>ppp&amp;la',
+            '\n  ',
+            '\n  pff\n'])
 
 
 class Libxml2DocumentTest(unittest.TestCase):

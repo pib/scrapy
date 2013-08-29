@@ -12,7 +12,7 @@ parsed by the L{clientFromString} and L{serverFromString} functions.
 @since: 10.1
 """
 
-from __future__ import division, absolute_import
+
 
 import os
 import socket
@@ -778,7 +778,7 @@ _serverParsers = {"tcp": _parseTCP,
                   "ssl": _parseSSL,
                   }
 
-_OP, _STRING = range(2)
+_OP, _STRING = list(range(2))
 
 def _tokenize(description):
     """
@@ -810,7 +810,7 @@ def _tokenize(description):
             current = ''
             ops = nextOps[n]
         elif n == '\\':
-            current += description.next()
+            current += next(description)
         else:
             current += n
     yield _STRING, current
@@ -1085,7 +1085,7 @@ def _loadCAsFromDir(directoryPath):
             pass
         else:
             caCerts[theCert.digest()] = theCert.original
-    return caCerts.values()
+    return list(caCerts.values())
 
 
 

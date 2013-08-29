@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 
 from twisted.python import log as txlog, failure
 from twisted.trial import unittest
@@ -63,7 +63,7 @@ class ScrapyFileLogObserverTest(unittest.TestCase):
         self.assertEqual(self.logged(), "[myspider] WARNING: Hello")
 
     def test_msg_encoding(self):
-        log.msg(u"Price: \xa3100")
+        log.msg("Price: \xa3100")
         self.assertEqual(self.logged(), "[scrapy] INFO: Price: \xc2\xa3100")
 
     def test_msg_ignore_level(self):
@@ -123,7 +123,7 @@ class Latin1ScrapyFileLogObserverTest(ScrapyFileLogObserverTest):
     encoding = 'latin-1'
 
     def test_msg_encoding(self):
-        log.msg(u"Price: \xa3100")
+        log.msg("Price: \xa3100")
         logged = self.f.getvalue().strip()[25:]
         self.assertEqual(self.logged(), "[scrapy] INFO: Price: \xa3100")
 

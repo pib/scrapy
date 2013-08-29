@@ -7,7 +7,7 @@ See documentation in docs/topics/feed-exports.rst
 import sys, os, posixpath
 from tempfile import TemporaryFile
 from datetime import datetime
-from urlparse import urlparse
+from urllib.parse import urlparse
 from ftplib import FTP
 
 from zope.interface import Interface, implements
@@ -195,7 +195,7 @@ class FeedExporter(object):
         conf = dict(self.settings['%s_BASE' % setting_prefix])
         conf.update(self.settings[setting_prefix])
         d = {}
-        for k, v in conf.items():
+        for k, v in list(conf.items()):
             try:
                 d[k] = load_object(v)
             except NotConfigured:

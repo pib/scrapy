@@ -2,7 +2,7 @@
 SGMLParser-based Link extractors
 """
 import re
-from urlparse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin
 from w3lib.url import safe_url_string
 from scrapy.selector import HtmlXPathSelector
 from scrapy.link import Link
@@ -11,14 +11,15 @@ from scrapy.utils.misc import arg_to_iter
 from scrapy.utils.python import FixedSGMLParser, unique as unique_list, str_to_unicode
 from scrapy.utils.url import canonicalize_url, url_is_from_any_domain, url_has_any_extension
 from scrapy.utils.response import get_base_url
+import collections
 
 
 class BaseSgmlLinkExtractor(FixedSGMLParser):
 
     def __init__(self, tag="a", attr="href", unique=False, process_value=None):
         FixedSGMLParser.__init__(self)
-        self.scan_tag = tag if callable(tag) else lambda t: t == tag
-        self.scan_attr = attr if callable(attr) else lambda a: a == attr
+        self.scan_tag = tag if isinstance(tag, collections.Callable) else lambda t: t == tag
+        self.scan_attr = attr if isinstance(attr, collections.Callable) else lambda a: a == attr
         self.process_value = (lambda v: v) if process_value is None else process_value
         self.current_link = None
         self.unique = unique
@@ -33,7 +34,7 @@ class BaseSgmlLinkExtractor(FixedSGMLParser):
         if base_url is None:
             base_url = urljoin(response_url, self.base_url) if self.base_url else response_url
         for link in self.links:
-            if isinstance(link.url, unicode):
+            if isinstance(link.url, str):
                 link.url = link.url.encode(response_encoding)
             link.url = urljoin(base_url, link.url)
             link.url = safe_url_string(link.url, response_encoding)
@@ -118,7 +119,7 @@ class SgmlLinkExtractor(BaseSgmlLinkExtractor):
         if self.restrict_xpaths:
             hxs = HtmlXPathSelector(response)
             base_url = get_base_url(response)
-            body = u''.join(f
+            body = ''.join(f
                             for x in self.restrict_xpaths
                             for f in hxs.select(x).extract()
                             ).encode(response.encoding)

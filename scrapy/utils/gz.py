@@ -1,5 +1,5 @@
 import struct
-from cStringIO import StringIO
+from io import StringIO
 from gzip import GzipFile
 
 def gunzip(data):

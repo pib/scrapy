@@ -53,7 +53,7 @@ class DeferUtilsTest(unittest.TestCase):
         gotexc = False
         try:
             yield process_chain([cb1, cb_fail, cb3], 'res', 'v1', 'v2')
-        except TypeError, e:
+        except TypeError as e:
             gotexc = True
         self.failUnless(gotexc)
 
@@ -82,17 +82,17 @@ class IterErrbackTest(unittest.TestCase):
 
     def test_iter_errback_good(self):
         def itergood():
-            for x in xrange(10):
+            for x in range(10):
                 yield x
 
         errors = []
         out = list(iter_errback(itergood(), errors.append))
-        self.failUnlessEqual(out, range(10))
+        self.failUnlessEqual(out, list(range(10)))
         self.failIf(errors)
 
     def test_iter_errback_bad(self):
         def iterbad():
-            for x in xrange(10):
+            for x in range(10):
                 if x == 5:
                     a = 1/0
                 yield x

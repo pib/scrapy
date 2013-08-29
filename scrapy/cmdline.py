@@ -17,7 +17,7 @@ def _iter_command_classes(module_name):
     # TODO: add `name` attribute to commands and and merge this function with
     # scrapy.utils.spider.iter_spider_classes
     for module in walk_modules(module_name):
-        for obj in vars(module).itervalues():
+        for obj in vars(module).values():
             if inspect.isclass(obj) and \
                issubclass(obj, ScrapyCommand) and \
                obj.__module__ == module.__name__:
@@ -59,34 +59,34 @@ def _pop_command_name(argv):
 
 def _print_header(settings, inproject):
     if inproject:
-        print "Scrapy %s - project: %s\n" % (scrapy.__version__, \
-            settings['BOT_NAME'])
+        print("Scrapy %s - project: %s\n" % (scrapy.__version__, \
+            settings['BOT_NAME']))
     else:
-        print "Scrapy %s - no active project\n" % scrapy.__version__
+        print("Scrapy %s - no active project\n" % scrapy.__version__)
 
 def _print_commands(settings, inproject):
     _print_header(settings, inproject)
-    print "Usage:"
-    print "  scrapy <command> [options] [args]\n"
-    print "Available commands:"
+    print("Usage:")
+    print("  scrapy <command> [options] [args]\n")
+    print("Available commands:")
     cmds = _get_commands_dict(settings, inproject)
-    for cmdname, cmdclass in sorted(cmds.iteritems()):
-        print "  %-13s %s" % (cmdname, cmdclass.short_desc())
+    for cmdname, cmdclass in sorted(cmds.items()):
+        print("  %-13s %s" % (cmdname, cmdclass.short_desc()))
     if not inproject:
-        print
-        print "  [ more ]      More commands available when run from project directory"
-    print
-    print 'Use "scrapy <command> -h" to see more info about a command'
+        print()
+        print("  [ more ]      More commands available when run from project directory")
+    print()
+    print('Use "scrapy <command> -h" to see more info about a command')
 
 def _print_unknown_command(settings, cmdname, inproject):
     _print_header(settings, inproject)
-    print "Unknown command: %s\n" % cmdname
-    print 'Use "scrapy" to see available commands' 
+    print("Unknown command: %s\n" % cmdname)
+    print('Use "scrapy" to see available commands') 
 
 def _run_print_help(parser, func, *a, **kw):
     try:
         func(*a, **kw)
-    except UsageError, e:
+    except UsageError as e:
         if str(e):
             parser.error(str(e))
         if e.print_help:

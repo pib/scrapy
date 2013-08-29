@@ -102,7 +102,6 @@ setup_args = {
     'cmdclass': cmdclasses,
     'data_files': data_files,
     'scripts': scripts,
-    'use_2to3': True,
     'classifiers': [
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',

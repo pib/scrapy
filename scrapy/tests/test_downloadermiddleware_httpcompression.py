@@ -1,6 +1,6 @@
 from unittest import TestCase
 from os.path import join, abspath, dirname
-from cStringIO import StringIO
+from io import StringIO
 from gzip import GzipFile
 
 from scrapy.spider import BaseSpider

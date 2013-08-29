@@ -3,6 +3,7 @@ Helper functions for serializing (and deserializing) requests.
 """
 
 from scrapy.http import Request
+import collections
 
 def request_to_dict(request, spider=None):
     """Convert Request object to a dict.
@@ -11,10 +12,10 @@ def request_to_dict(request, spider=None):
     used in the callback and store that as the callback.
     """
     cb = request.callback
-    if callable(cb):
+    if isinstance(cb, collections.Callable):
         cb = _find_method(spider, cb)
     eb = request.errback
-    if callable(eb):
+    if isinstance(eb, collections.Callable):
         eb = _find_method(spider, eb)
     d = {
         'url': request.url.decode('ascii'), # urls should be safe (safe_string_url)
@@ -59,8 +60,8 @@ def request_from_dict(d, spider=None):
 
 
 def _find_method(obj, func):
-    if obj and hasattr(func, 'im_self') and func.im_self is obj:
-        return func.im_func.__name__
+    if obj and hasattr(func, 'im_self') and func.__self__ is obj:
+        return func.__func__.__name__
     else:
         raise ValueError("Function %s is not a method of: %s" % (func, obj))
 

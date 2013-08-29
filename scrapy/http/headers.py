@@ -11,7 +11,7 @@ class Headers(CaselessDict):
 
     def normkey(self, key):
         """Headers must not be unicode"""
-        if isinstance(key, unicode):
+        if isinstance(key, str):
             return key.title().encode(self.encoding)
         return key.title()
 
@@ -19,7 +19,7 @@ class Headers(CaselessDict):
         """Headers must not be unicode"""
         if not hasattr(value, '__iter__'):
             value = [value]
-        return [x.encode(self.encoding) if isinstance(x, unicode) else x \
+        return [x.encode(self.encoding) if isinstance(x, str) else x \
             for x in value]
 
     def __getitem__(self, key):
@@ -54,13 +54,13 @@ class Headers(CaselessDict):
         self[key] = lst
 
     def items(self):
-        return list(self.iteritems())
+        return list(self.items())
 
     def iteritems(self):
-        return ((k, self.getlist(k)) for k in self.keys())
+        return ((k, self.getlist(k)) for k in list(self.keys()))
 
     def values(self):
-        return [self[k] for k in self.keys()]
+        return [self[k] for k in list(self.keys())]
 
     def to_string(self):
         return headers_dict_to_raw(self)

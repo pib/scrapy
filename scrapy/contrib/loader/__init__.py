@@ -32,7 +32,7 @@ class ItemLoader(object):
         if value is None:
             return
         if not field_name:
-            for k,v in value.iteritems():
+            for k,v in value.items():
                 self._add_value(k, v)
         else:
             self._add_value(field_name, value)
@@ -42,7 +42,7 @@ class ItemLoader(object):
         if value is None:
             return
         if not field_name:
-            for k,v in value.iteritems():
+            for k,v in value.items():
                 self._replace_value(k, v)
         else:
             self._replace_value(field_name, value)
@@ -81,7 +81,7 @@ class ItemLoader(object):
         proc = wrap_loader_context(proc, self.context)
         try:
             return proc(self._values[field_name])
-        except Exception, e:
+        except Exception as e:
             raise ValueError("Error with output processor: field=%r value=%r error='%s: %s'" % \
                 (field_name, self._values[field_name], type(e).__name__, str(e)))
 

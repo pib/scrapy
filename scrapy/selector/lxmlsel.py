@@ -59,14 +59,14 @@ class XPathSelector(object_ref):
     def extract(self):
         try:
             return etree.tostring(self._root, method=self._tostring_method, \
-                encoding=unicode, with_tail=False)
+                encoding=str, with_tail=False)
         except (AttributeError, TypeError):
             if self._root is True:
-                return u'1'
+                return '1'
             elif self._root is False:
-                return u'0'
+                return '0'
             else:
-                return unicode(self._root)
+                return str(self._root)
 
     def register_namespace(self, prefix, uri):
         if self.namespaces is None:
@@ -78,7 +78,7 @@ class XPathSelector(object_ref):
             if el.tag.startswith('{'):
                 el.tag = el.tag.split('}', 1)[1]
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.extract())
 
     def __str__(self):

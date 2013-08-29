@@ -1,5 +1,5 @@
 import unittest, json
-from cStringIO import StringIO
+from io import StringIO
 
 from scrapy.utils.jsonrpc import jsonrpc_client_call, jsonrpc_server_call, \
     JsonRpcError, jsonrpc_errors
@@ -59,7 +59,7 @@ class JsonRpcUtilsTestCase(unittest.TestCase):
         raised = False
         try:
             jsonrpc_client_call('url', 'test', _urllib=ul)
-        except JsonRpcError, e:
+        except JsonRpcError as e:
             raised = True
             self.assertEqual(e.code, 123)
             self.assertEqual(e.message, 'hello')

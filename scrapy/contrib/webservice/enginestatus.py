@@ -14,7 +14,7 @@ class EngineStatusResource(JsonResource):
         status = get_engine_status(self.crawler.engine)
         if self._spider_name is None:
             return status
-        for sp, st in status['spiders'].items():
+        for sp, st in list(status['spiders'].items()):
             if sp.name == self._spider_name:
                 return st
 

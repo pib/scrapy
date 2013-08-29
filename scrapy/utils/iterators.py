@@ -1,5 +1,5 @@
 import re, csv
-from cStringIO import StringIO
+from io import StringIO
 
 from scrapy.http import TextResponse
 from scrapy.selector import XmlXPathSelector
@@ -47,9 +47,9 @@ def csviter(obj, delimiter=None, headers=None, encoding=None):
     """
     encoding = obj.encoding if isinstance(obj, TextResponse) else encoding or 'utf-8'
     def _getrow(csv_r):
-        return [str_to_unicode(field, encoding) for field in csv_r.next()]
+        return [str_to_unicode(field, encoding) for field in next(csv_r)]
 
-    lines = StringIO(body_or_str(obj, unicode=False))
+    lines = StringIO(body_or_str(obj, str=False))
     if delimiter:
         csv_r = csv.reader(lines, delimiter=delimiter)
     else:
@@ -65,5 +65,5 @@ def csviter(obj, delimiter=None, headers=None, encoding=None):
                     level=log.WARNING, csvlnum=csv_r.line_num, csvrow=len(row), csvheader=len(headers))
             continue
         else:
-            yield dict(zip(headers, row))
+            yield dict(list(zip(headers, row)))
 

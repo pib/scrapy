@@ -49,7 +49,7 @@ class Shell(object):
         else:
             self.populate_vars()
         if self.code:
-            print eval(self.code, globals(), self.vars)
+            print(eval(self.code, globals(), self.vars))
         else:
             start_python_console(self.vars)
 
@@ -107,7 +107,7 @@ class Shell(object):
 
     def print_help(self):
         self.p("Available Scrapy objects:")
-        for k, v in sorted(self.vars.iteritems()):
+        for k, v in sorted(self.vars.items()):
             if self._is_relevant(v):
                 self.p("  %-10s %s" % (k, v))
         self.p("Useful shortcuts:")
@@ -117,7 +117,7 @@ class Shell(object):
         self.p("  view(response)    View response in a browser")
 
     def p(self, line=''):
-        print "[s] %s" % line
+        print("[s] %s" % line)
 
     def _is_relevant(self, value):
         return isinstance(value, self.relevant_classes)

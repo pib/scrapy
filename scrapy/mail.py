@@ -3,7 +3,7 @@ Mail sending helpers
 
 See documentation in docs/topics/email.rst
 """
-from cStringIO import StringIO
+from io import StringIO
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMENonMultipart import MIMENonMultipart
 from email.MIMEBase import MIMEBase

@@ -7,9 +7,9 @@ See documentation in topics/images.rst
 import os
 import time
 import hashlib
-import urlparse
+import urllib.parse
 import rfc822
-from cStringIO import StringIO
+from io import StringIO
 from collections import defaultdict
 
 from twisted.internet import defer, threads
@@ -170,7 +170,7 @@ class ImagesPipeline(MediaPipeline):
         if os.path.isabs(uri):  # to support win32 paths like: C:\\some\dir
             scheme = 'file'
         else:
-            scheme = urlparse.urlparse(uri).scheme
+            scheme = urllib.parse.urlparse(uri).scheme
         store_cls = self.STORE_SCHEMES[scheme]
         return store_cls(uri)
 
@@ -271,7 +271,7 @@ class ImagesPipeline(MediaPipeline):
         image, buf = self.convert_image(orig_image)
         yield key, image, buf
 
-        for thumb_id, size in self.THUMBS.iteritems():
+        for thumb_id, size in self.THUMBS.items():
             thumb_key = self.thumb_key(request.url, thumb_id)
             thumb_image, thumb_buf = self.convert_image(image, size)
             yield thumb_key, thumb_image, thumb_buf

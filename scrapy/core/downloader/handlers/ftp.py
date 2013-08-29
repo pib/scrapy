@@ -29,8 +29,8 @@ In case of status 200 request, response.headers will come with two keys:
 """
 
 import re
-from urlparse import urlparse
-from cStringIO import StringIO
+from urllib.parse import urlparse
+from io import StringIO
 
 from twisted.internet import reactor
 from twisted.protocols.ftp import FTPClient, CommandFailed

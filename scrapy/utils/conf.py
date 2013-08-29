@@ -1,6 +1,6 @@
 import sys
 import os
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from operator import itemgetter
 
 def build_component_list(base, custom):
@@ -12,7 +12,7 @@ def build_component_list(base, custom):
         return custom
     compdict = base.copy()
     compdict.update(custom)
-    return [k for k, v in sorted(compdict.items(), key=itemgetter(1)) \
+    return [k for k, v in sorted(list(compdict.items()), key=itemgetter(1)) \
         if v is not None]
 
 def arglist_to_dict(arglist):

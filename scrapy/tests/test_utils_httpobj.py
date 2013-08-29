@@ -1,5 +1,5 @@
 import unittest
-import urlparse
+import urllib.parse
 
 from scrapy.http import Request
 from scrapy.utils.httpobj import urlparse_cached
@@ -13,7 +13,7 @@ class HttpobjUtilsTest(unittest.TestCase):
         req1a = urlparse_cached(request1)
         req1b = urlparse_cached(request1)
         req2 = urlparse_cached(request2)
-        urlp = urlparse.urlparse(url)
+        urlp = urllib.parse.urlparse(url)
 
         assert req1a == req2
         assert req1a == urlp

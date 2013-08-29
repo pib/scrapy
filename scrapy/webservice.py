@@ -54,7 +54,7 @@ class JsonRpcResource(JsonResource):
 class RootResource(JsonResource):
 
     def render_GET(self, txrequest):
-        return {'resources': self.children.keys()}
+        return {'resources': list(self.children.keys())}
 
     def getChild(self, name, txrequest):
         if name == '':
@@ -69,7 +69,7 @@ class WebService(server.Site):
             raise NotConfigured
         self.crawler = crawler
         logfile = crawler.settings['WEBSERVICE_LOGFILE']
-        self.portrange = map(int, crawler.settings.getlist('WEBSERVICE_PORT'))
+        self.portrange = list(map(int, crawler.settings.getlist('WEBSERVICE_PORT')))
         self.host = crawler.settings['WEBSERVICE_HOST']
         root = RootResource(crawler)
         reslist = build_component_list(crawler.settings['WEBSERVICE_RESOURCES_BASE'], \

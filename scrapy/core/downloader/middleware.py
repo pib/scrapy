@@ -32,7 +32,7 @@ class DownloaderMiddlewareManager(MiddlewareManager):
                 response = method(request=request, spider=spider)
                 assert response is None or isinstance(response, (Response, Request)), \
                         'Middleware %s.process_request must return None, Response or Request, got %s' % \
-                        (method.im_self.__class__.__name__, response.__class__.__name__)
+                        (method.__self__.__class__.__name__, response.__class__.__name__)
                 if response:
                     return response
             return download_func(request=request, spider=spider)
@@ -46,7 +46,7 @@ class DownloaderMiddlewareManager(MiddlewareManager):
                 response = method(request=request, response=response, spider=spider)
                 assert isinstance(response, (Response, Request)), \
                     'Middleware %s.process_response must return Response or Request, got %s' % \
-                    (method.im_self.__class__.__name__, type(response))
+                    (method.__self__.__class__.__name__, type(response))
                 if isinstance(response, Request):
                     return response
             return response
@@ -57,7 +57,7 @@ class DownloaderMiddlewareManager(MiddlewareManager):
                 response = method(request=request, exception=exception, spider=spider)
                 assert response is None or isinstance(response, (Response, Request)), \
                     'Middleware %s.process_exception must return None, Response or Request, got %s' % \
-                    (method.im_self.__class__.__name__, type(response))
+                    (method.__self__.__class__.__name__, type(response))
                 if response:
                     return response
             return _failure

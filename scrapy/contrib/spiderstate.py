@@ -1,4 +1,4 @@
-import os, cPickle as pickle
+import os, pickle as pickle
 
 from scrapy import signals
 

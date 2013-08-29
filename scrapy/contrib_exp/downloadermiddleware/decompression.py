@@ -6,7 +6,7 @@ import bz2
 import gzip
 import zipfile
 import tarfile
-from cStringIO import StringIO
+from io import StringIO
 from tempfile import mktemp
 
 from scrapy import log
@@ -72,7 +72,7 @@ class DecompressionMiddleware(object):
         if not response.body:
             return response
 
-        for fmt, func in self._formats.iteritems():
+        for fmt, func in self._formats.items():
             new_response = func(response)
             if new_response:
                 log.msg(format='Decompressed response with format: %(responsefmt)s',

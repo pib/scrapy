@@ -7,6 +7,7 @@ from scrapy.utils.conf import arglist_to_dict
 from scrapy.utils.spider import iterate_spider_output, create_spider_for_request
 from scrapy.exceptions import UsageError
 from scrapy import log
+import collections
 
 class Command(ScrapyCommand):
 
@@ -50,7 +51,7 @@ class Command(ScrapyCommand):
 
     @property
     def max_level(self):
-        levels = self.items.keys() + self.requests.keys()
+        levels = list(self.items.keys()) + list(self.requests.keys())
         if levels: return max(levels)
         else: return 0
 
@@ -64,16 +65,16 @@ class Command(ScrapyCommand):
 
     def print_items(self, lvl=None, colour=True):
         if lvl is None:
-            items = [item for lst in self.items.values() for item in lst]
+            items = [item for lst in list(self.items.values()) for item in lst]
         else:
             items = self.items.get(lvl, [])
 
-        print "# Scraped Items ", "-"*60
+        print("# Scraped Items ", "-"*60)
         display.pprint([dict(x) for x in items], colorize=colour)
 
     def print_requests(self, lvl=None, colour=True):
         if lvl is None:
-            levels = self.requests.keys()
+            levels = list(self.requests.keys())
             if levels:
                 requests = self.requests[max(levels)]
             else:
@@ -81,21 +82,21 @@ class Command(ScrapyCommand):
         else:
             requests = self.requests.get(lvl, [])
 
-        print "# Requests ", "-"*65
+        print("# Requests ", "-"*65)
         display.pprint(requests, colorize=colour)
 
     def print_results(self, opts):
         colour = not opts.nocolour
 
         if opts.verbose:
-            for level in xrange(1, self.max_level+1):
-                print '\n>>> DEPTH LEVEL: %s <<<' % level
+            for level in range(1, self.max_level+1):
+                print('\n>>> DEPTH LEVEL: %s <<<' % level)
                 if not opts.noitems:
                     self.print_items(level, colour)
                 if not opts.nolinks:
                     self.print_requests(level, colour)
         else:
-            print '\n>>> STATUS DEPTH LEVEL %s <<<' % self.max_level
+            print('\n>>> STATUS DEPTH LEVEL %s <<<' % self.max_level)
             if not opts.noitems:
                 self.print_items(colour=colour)
             if not opts.nolinks:
@@ -160,9 +161,9 @@ class Command(ScrapyCommand):
                 else:
                     cb = 'parse'
 
-            if not callable(cb):
+            if not isinstance(cb, collections.Callable):
                 cb_method = getattr(self.spider, cb, None)
-                if callable(cb_method):
+                if isinstance(cb_method, collections.Callable):
                     cb = cb_method
                 else:
                     log.msg(format='Cannot find callback %(callback)r in spider: %(spider)s',

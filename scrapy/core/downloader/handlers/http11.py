@@ -1,8 +1,8 @@
 """Download handlers for http and https schemes"""
 
 from time import time
-from cStringIO import StringIO
-from urlparse import urldefrag
+from io import StringIO
+from urllib.parse import urldefrag
 
 from zope.interface import implements
 from twisted.internet import defer, reactor, protocol

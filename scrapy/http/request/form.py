@@ -5,7 +5,7 @@ This module implements the FormRequest class which is a more covenient class
 See documentation in docs/topics/request-response.rst
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import lxml.html
 from scrapy.http.request import Request
 from scrapy.utils.python import unicode_to_str
@@ -21,7 +21,7 @@ class FormRequest(Request):
         super(FormRequest, self).__init__(*args, **kwargs)
 
         if formdata:
-            items = formdata.iteritems() if isinstance(formdata, dict) else formdata
+            items = iter(formdata.items()) if isinstance(formdata, dict) else formdata
             querystr = _urlencode(items, self.encoding)
             if self.method == 'POST':
                 self.headers.setdefault('Content-Type', 'application/x-www-form-urlencoded')
@@ -44,7 +44,7 @@ def _urlencode(seq, enc):
     values = [(unicode_to_str(k, enc), unicode_to_str(v, enc))
               for k, vs in seq
               for v in (vs if hasattr(vs, '__iter__') else [vs])]
-    return urllib.urlencode(values, doseq=1)
+    return urllib.parse.urlencode(values, doseq=1)
 
 def _get_form(response, formname, formnumber, formxpath):
     """Find the form element """
@@ -93,7 +93,7 @@ def _get_inputs(form, formdata, dont_click, clickdata, response):
                         '|descendant::select'
                         '|descendant::input[@type!="submit" and @type!="image" '
                         'and ((@type!="checkbox" and @type!="radio") or @checked)]')
-    values = [(k, u'' if v is None else v) \
+    values = [(k, '' if v is None else v) \
               for k, v in (_value(e) for e in inputs) \
               if k and k not in formdata]
 
@@ -102,7 +102,7 @@ def _get_inputs(form, formdata, dont_click, clickdata, response):
         if clickable and clickable[0] not in formdata and not clickable[0] is None:
             values.append(clickable)
 
-    values.extend(formdata.iteritems())
+    values.extend(iter(formdata.items()))
     return values
 
 def _value(ele):
@@ -123,7 +123,7 @@ def _select_value(ele, n, v):
         # This is a workround to bug in lxml fixed 2.3.1
         # fix https://github.com/lxml/lxml/commit/57f49eed82068a20da3db8f1b18ae00c1bab8b12#L1L1139
         selected_options = ele.xpath('.//option[@selected]')
-        v = [(o.get('value') or o.text or u'').strip() for o in selected_options]
+        v = [(o.get('value') or o.text or '').strip() for o in selected_options]
     return n, v
 
 
@@ -156,8 +156,8 @@ def _get_clickable(clickdata, form):
 
     # We didn't find it, so now we build an XPath expression out of the other
     # arguments, because they can be used as such
-    xpath = u'.//*' + \
-            u''.join(u'[@%s="%s"]' % c for c in clickdata.iteritems())
+    xpath = './/*' + \
+            ''.join('[@%s="%s"]' % c for c in clickdata.items())
     el = form.xpath(xpath)
     if len(el) == 1:
         return (el[0].name, el[0].value)

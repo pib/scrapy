@@ -5,9 +5,9 @@ from twisted.python.failure import Failure
 from scrapy import log
 
 
-SCRAPEDFMT = u"Scraped from %(src)s" + os.linesep + "%(item)s"
-DROPPEDFMT = u"Dropped: %(exception)s" + os.linesep + "%(item)s"
-CRAWLEDFMT = u"Crawled (%(status)s) %(request)s (referer: %(referer)s)%(flags)s"
+SCRAPEDFMT = "Scraped from %(src)s" + os.linesep + "%(item)s"
+DROPPEDFMT = "Dropped: %(exception)s" + os.linesep + "%(item)s"
+CRAWLEDFMT = "Crawled (%(status)s) %(request)s (referer: %(referer)s)%(flags)s"
 
 class LogFormatter(object):
     """Class for generating log messages for different actions. All methods

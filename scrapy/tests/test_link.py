@@ -45,7 +45,7 @@ class LinkTest(unittest.TestCase):
 
     def test_unicode_url(self):
         with warnings.catch_warnings(record=True) as w:
-            l = Link(u"http://www.example.com/\xa3")
+            l = Link("http://www.example.com/\xa3")
             assert isinstance(l.url, str)
             assert l.url == 'http://www.example.com/\xc2\xa3'
             assert len(w) == 1, "warning not issued"

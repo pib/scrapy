@@ -11,11 +11,12 @@ from scrapy.contrib.pipeline.media import MediaPipeline
 from scrapy.utils.signal import disconnect_all
 from scrapy import signals
 from scrapy import log
+import collections
 
 
 def _mocked_download_func(request, info):
     response = request.meta.get('response')
-    return response() if callable(response) else response
+    return response() if isinstance(response, collections.Callable) else response
 
 
 class BaseMediaPipelineTestCase(unittest.TestCase):
@@ -29,7 +30,7 @@ class BaseMediaPipelineTestCase(unittest.TestCase):
         self.info = self.pipe.spiderinfo
 
     def tearDown(self):
-        for name, signal in vars(signals).items():
+        for name, signal in list(vars(signals).items()):
             if not name.startswith('_'):
                 disconnect_all(signal)
 

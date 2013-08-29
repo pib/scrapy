@@ -1,8 +1,8 @@
 import cgi
 import unittest
-import xmlrpclib
-from cStringIO import StringIO
-from urlparse import urlparse
+import xmlrpc.client
+from io import StringIO
+from urllib.parse import urlparse
 
 from scrapy.http import Request, FormRequest, XmlRpcRequest, Headers, HtmlResponse
 
@@ -55,9 +55,9 @@ class RequestTest(unittest.TestCase):
         self.assertFalse(p.headers is r.headers)
 
         # headers must not be unicode
-        h = Headers({'key1': u'val1', u'key2': 'val2'})
-        h[u'newkey'] = u'newval'
-        for k, v in h.iteritems():
+        h = Headers({'key1': 'val1', 'key2': 'val2'})
+        h['newkey'] = 'newval'
+        for k, v in h.items():
             self.assert_(isinstance(k, str))
             for s in v:
                 self.assert_(isinstance(s, str))
@@ -85,8 +85,8 @@ class RequestTest(unittest.TestCase):
         self.assertEqual(r.url, "http://www.scrapy.org/blank%20space")
 
         # url encoding
-        r1 = self.request_class(url=u"http://www.scrapy.org/price/\xa3", encoding="utf-8")
-        r2 = self.request_class(url=u"http://www.scrapy.org/price/\xa3", encoding="latin1")
+        r1 = self.request_class(url="http://www.scrapy.org/price/\xa3", encoding="utf-8")
+        r2 = self.request_class(url="http://www.scrapy.org/price/\xa3", encoding="latin1")
         self.assertEqual(r1.url, "http://www.scrapy.org/price/%C2%A3")
         self.assertEqual(r2.url, "http://www.scrapy.org/price/%A3")
 
@@ -98,11 +98,11 @@ class RequestTest(unittest.TestCase):
         assert isinstance(r2.body, str)
         self.assertEqual(r2.encoding, 'utf-8') # default encoding
 
-        r3 = self.request_class(url="http://www.example.com/", body=u"Price: \xa3100", encoding='utf-8')
+        r3 = self.request_class(url="http://www.example.com/", body="Price: \xa3100", encoding='utf-8')
         assert isinstance(r3.body, str)
         self.assertEqual(r3.body, "Price: \xc2\xa3100")
 
-        r4 = self.request_class(url="http://www.example.com/", body=u"Price: \xa3100", encoding='latin1')
+        r4 = self.request_class(url="http://www.example.com/", body="Price: \xa3100", encoding='latin1')
         assert isinstance(r4.body, str)
         self.assertEqual(r4.body, "Price: \xa3100")
 
@@ -111,7 +111,7 @@ class RequestTest(unittest.TestCase):
         r = self.request_class(url="http://www.example.com/ajax.html#!key=value")
         self.assertEqual(r.url, "http://www.example.com/ajax.html?_escaped_fragment_=key=value")
         # unicode url
-        r = self.request_class(url=u"http://www.example.com/ajax.html#!key=value")
+        r = self.request_class(url="http://www.example.com/ajax.html#!key=value")
         self.assertEqual(r.url, "http://www.example.com/ajax.html?_escaped_fragment_=key=value")
 
     def test_copy(self):
@@ -172,7 +172,7 @@ class RequestTest(unittest.TestCase):
         assert r4.dont_filter is False
 
     def test_method_always_str(self):
-        r = self.request_class("http://www.example.com", method=u"POST")
+        r = self.request_class("http://www.example.com", method="POST")
         assert isinstance(r.method, str)
 
 
@@ -194,14 +194,14 @@ class FormRequestTest(RequestTest):
         self.assertEqual(r2.headers['Content-Type'], 'application/x-www-form-urlencoded')
 
     def test_custom_encoding(self):
-        data = {'price': u'\xa3 100'}
+        data = {'price': '\xa3 100'}
         r3 = self.request_class("http://www.example.com", formdata=data, encoding='latin1')
         self.assertEqual(r3.encoding, 'latin1')
         self.assertEqual(r3.body, 'price=%A3+100')
 
     def test_multi_key_values(self):
         # using multiples values for a single key
-        data = {'price': u'\xa3 100', 'colours': ['red', 'blue', 'green']}
+        data = {'price': '\xa3 100', 'colours': ['red', 'blue', 'green']}
         r3 = self.request_class("http://www.example.com", formdata=data)
         self.assertEqual(r3.body, 'colours=red&colours=blue&colours=green&price=%C2%A3+100')
 
@@ -337,16 +337,16 @@ class FormRequestTest(RequestTest):
 
     def test_from_response_unicode_clickdata(self):
         response = _buildresponse(
-            u"""<form action="get.php" method="GET">
+            """<form action="get.php" method="GET">
             <input type="submit" name="price in \u00a3" value="\u00a3 1000">
             <input type="submit" name="price in \u20ac" value="\u20ac 2000">
             <input type="hidden" name="poundsign" value="\u00a3">
             <input type="hidden" name="eurosign" value="\u20ac">
             </form>""")
         req = self.request_class.from_response(response, \
-                clickdata={'name': u'price in \u00a3'})
+                clickdata={'name': 'price in \u00a3'})
         fs = _qs(req)
-        self.assertTrue(fs[u'price in \u00a3'.encode('utf-8')])
+        self.assertTrue(fs['price in \u00a3'.encode('utf-8')])
 
     def test_from_response_multiple_forms_clickdata(self):
         response = _buildresponse(
@@ -642,7 +642,7 @@ class XmlRpcRequestTest(RequestTest):
     def _test_request(self, **kwargs):
         r = self.request_class('http://scrapytest.org/rpc2', **kwargs)
         self.assertEqual(r.headers['Content-Type'], 'text/xml')
-        self.assertEqual(r.body, xmlrpclib.dumps(**kwargs))
+        self.assertEqual(r.body, xmlrpc.client.dumps(**kwargs))
         self.assertEqual(r.method, 'POST')
         self.assertEqual(r.encoding, kwargs.get('encoding', 'utf-8'))
         self.assertTrue(r.dont_filter, True)
@@ -651,8 +651,8 @@ class XmlRpcRequestTest(RequestTest):
         self._test_request(params=('value',))
         self._test_request(params=('username', 'password'), methodname='login')
         self._test_request(params=('response', ), methodresponse='login')
-        self._test_request(params=(u'pas\xa3',), encoding='utf-8')
-        self._test_request(params=(u'pas\xa3',), encoding='latin')
+        self._test_request(params=('pas\xa3',), encoding='utf-8')
+        self._test_request(params=('pas\xa3',), encoding='latin')
         self._test_request(params=(None,), allow_none=1)
         self.assertRaises(TypeError, self._test_request)
         self.assertRaises(TypeError, self._test_request, params=(None,))

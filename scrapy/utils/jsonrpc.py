@@ -3,7 +3,7 @@ This module implements the JSON-RPC 2.0 protocol, as defined in:
 http://groups.google.com/group/json-rpc/web/json-rpc-2-0
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 import traceback
 
@@ -53,7 +53,7 @@ def jsonrpc_server_call(target, jsonrpc_request, json_decoder=None):
 
     try:
         req = json_decoder.decode(jsonrpc_request)
-    except Exception, e:
+    except Exception as e:
         return jsonrpc_error(None, jsonrpc_errors.PARSE_ERROR, 'Parse error', \
             traceback.format_exc())
 
@@ -69,10 +69,10 @@ def jsonrpc_server_call(target, jsonrpc_request, json_decoder=None):
 
     params = req.get('params', [])
     a, kw = ([], params) if isinstance(params, dict) else (params, {})
-    kw = dict([(str(k), v) for k, v in kw.items()]) # convert kw keys to str
+    kw = dict([(str(k), v) for k, v in list(kw.items())]) # convert kw keys to str
     try:
         return jsonrpc_result(id, method(*a, **kw))
-    except Exception, e:
+    except Exception as e:
         return jsonrpc_error(id, jsonrpc_errors.INTERNAL_ERROR, str(e), \
             traceback.format_exc())
 

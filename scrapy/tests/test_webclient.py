@@ -3,7 +3,7 @@ from twisted.internet import defer
 Tests borrowed from the twisted.web.client tests.
 """
 import os
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from twisted.trial import unittest
 from twisted.web import server, static, error, util
@@ -72,7 +72,7 @@ class ParseUrlTestCase(unittest.TestCase):
         elements of its return tuple, even when passed an URL which has
         previously been passed to L{urlparse} as a C{unicode} string.
         """
-        badInput = u'http://example.com/path'
+        badInput = 'http://example.com/path'
         goodInput = badInput.encode('ascii')
         urlparse(badInput)
         scheme, netloc, host, port, path = self._parse(goodInput)
@@ -276,7 +276,7 @@ class WebClientTestCase(unittest.TestCase):
         def cleanup(passthrough):
             # Clean up the server which is hanging around not doing
             # anything.
-            connected = self.wrapper.protocols.keys()
+            connected = list(self.wrapper.protocols.keys())
             # There might be nothing here if the server managed to already see
             # that the connection was lost.
             if connected:

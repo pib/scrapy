@@ -25,7 +25,7 @@ class _StreamReader(object):
             self._text, self.encoding = obj.body, obj.encoding
         else:
             self._text, self.encoding = obj, 'utf-8'
-        self._is_unicode = isinstance(self._text, unicode)
+        self._is_unicode = isinstance(self._text, str)
 
     def read(self, n=65535):
         self.read = self._read_unicode if self._is_unicode else self._read_string

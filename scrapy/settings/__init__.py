@@ -42,7 +42,7 @@ class Settings(object):
         value = self.get(name)
         if value is None:
             return default or {}
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = json.loads(value)
         if isinstance(value, dict):
             return value

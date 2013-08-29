@@ -28,17 +28,17 @@ class Command(ScrapyCommand):
             help="print response HTTP headers instead of body")
 
     def _print_headers(self, headers, prefix):
-        for key, values in headers.items():
+        for key, values in list(headers.items()):
             for value in values:
-                print '%s %s: %s' % (prefix, key, value)
+                print('%s %s: %s' % (prefix, key, value))
 
     def _print_response(self, response, opts):
         if opts.headers:
             self._print_headers(response.request.headers, '>')
-            print '>'
+            print('>')
             self._print_headers(response.headers, '<')
         else:
-            print response.body
+            print(response.body)
 
     def run(self, args, opts):
         if len(args) != 1 or not is_url(args[0]):

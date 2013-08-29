@@ -47,7 +47,7 @@ class Response(object_ref):
     def _set_body(self, body):
         if isinstance(body, str):
             self._body = body
-        elif isinstance(body, unicode):
+        elif isinstance(body, str):
             raise TypeError("Cannot assign a unicode body to a raw Response. " \
                 "Use TextResponse, HtmlResponse, etc")
         elif body is None:

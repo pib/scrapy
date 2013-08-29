@@ -10,7 +10,7 @@ module with the ``runserver`` argument::
     python test_engine.py runserver
 """
 
-import sys, os, re, urlparse
+import sys, os, re, urllib.parse
 
 from twisted.internet import reactor, defer
 from twisted.web import server, static, util
@@ -65,8 +65,8 @@ def start_test_site(debug=False):
 
     port = reactor.listenTCP(0, server.Site(r), interface="127.0.0.1")
     if debug:
-        print "Test server running at http://localhost:%d/ - hit Ctrl-C to finish." \
-            % port.getHost().port
+        print("Test server running at http://localhost:%d/ - hit Ctrl-C to finish." \
+            % port.getHost().port)
     return port
 
 
@@ -87,7 +87,7 @@ class CrawlerRun(object):
         start_urls = [self.geturl("/"), self.geturl("/redirect")]
         self.spider = TestSpider(start_urls=start_urls)
 
-        for name, signal in vars(signals).items():
+        for name, signal in list(vars(signals).items()):
             if not name.startswith('_'):
                 dispatcher.connect(self.record_signal, signal)
 
@@ -106,7 +106,7 @@ class CrawlerRun(object):
 
     def stop(self):
         self.port.stopListening()
-        for name, signal in vars(signals).items():
+        for name, signal in list(vars(signals).items()):
             if not name.startswith('_'):
                 disconnect_all(signal)
         self.crawler.uninstall()
@@ -116,7 +116,7 @@ class CrawlerRun(object):
         return "http://localhost:%s%s" % (self.portno, path)
 
     def getpath(self, url):
-        u = urlparse.urlparse(url)
+        u = urllib.parse.urlparse(url)
         return u.path
 
     def item_scraped(self, item, spider, response):

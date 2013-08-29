@@ -92,7 +92,7 @@ class BaseResponseTest(unittest.TestCase):
         self.assertEqual(r4.flags, [])
 
     def _assert_response_values(self, response, encoding, body):
-        if isinstance(body, unicode):
+        if isinstance(body, str):
             body_unicode = body
             body_str = body.encode(encoding)
         else:
@@ -110,7 +110,7 @@ class BaseResponseTest(unittest.TestCase):
 class ResponseText(BaseResponseTest):
 
     def test_no_unicode_url(self):
-        self.assertRaises(TypeError, self.response_class, u'http://www.example.com')
+        self.assertRaises(TypeError, self.response_class, 'http://www.example.com')
 
 
 class TextResponseTest(BaseResponseTest):
@@ -131,36 +131,36 @@ class TextResponseTest(BaseResponseTest):
 
     def test_unicode_url(self):
         # instantiate with unicode url without encoding (should set default encoding)
-        resp = self.response_class(u"http://www.example.com/")
+        resp = self.response_class("http://www.example.com/")
         self._assert_response_encoding(resp, self.response_class._DEFAULT_ENCODING)
 
         # make sure urls are converted to str
-        resp = self.response_class(url=u"http://www.example.com/", encoding='utf-8')
+        resp = self.response_class(url="http://www.example.com/", encoding='utf-8')
         assert isinstance(resp.url, str)
 
-        resp = self.response_class(url=u"http://www.example.com/price/\xa3", encoding='utf-8')
+        resp = self.response_class(url="http://www.example.com/price/\xa3", encoding='utf-8')
         self.assertEqual(resp.url, 'http://www.example.com/price/\xc2\xa3')
-        resp = self.response_class(url=u"http://www.example.com/price/\xa3", encoding='latin-1')
+        resp = self.response_class(url="http://www.example.com/price/\xa3", encoding='latin-1')
         self.assertEqual(resp.url, 'http://www.example.com/price/\xa3')
-        resp = self.response_class(u"http://www.example.com/price/\xa3", headers={"Content-type": ["text/html; charset=utf-8"]})
+        resp = self.response_class("http://www.example.com/price/\xa3", headers={"Content-type": ["text/html; charset=utf-8"]})
         self.assertEqual(resp.url, 'http://www.example.com/price/\xc2\xa3')
-        resp = self.response_class(u"http://www.example.com/price/\xa3", headers={"Content-type": ["text/html; charset=iso-8859-1"]})
+        resp = self.response_class("http://www.example.com/price/\xa3", headers={"Content-type": ["text/html; charset=iso-8859-1"]})
         self.assertEqual(resp.url, 'http://www.example.com/price/\xa3')
 
     def test_unicode_body(self):
-        unicode_string = u'\u043a\u0438\u0440\u0438\u043b\u043b\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0442\u0435\u043a\u0441\u0442'
-        self.assertRaises(TypeError, self.response_class, 'http://www.example.com', body=u'unicode body')
+        unicode_string = '\u043a\u0438\u0440\u0438\u043b\u043b\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0442\u0435\u043a\u0441\u0442'
+        self.assertRaises(TypeError, self.response_class, 'http://www.example.com', body='unicode body')
 
         original_string = unicode_string.encode('cp1251')
         r1 = self.response_class('http://www.example.com', body=original_string, encoding='cp1251')
 
         # check body_as_unicode
-        self.assertTrue(isinstance(r1.body_as_unicode(), unicode))
+        self.assertTrue(isinstance(r1.body_as_unicode(), str))
         self.assertEqual(r1.body_as_unicode(), unicode_string)
 
     def test_encoding(self):
         r1 = self.response_class("http://www.example.com", headers={"Content-type": ["text/html; charset=utf-8"]}, body="\xc2\xa3")
-        r2 = self.response_class("http://www.example.com", encoding='utf-8', body=u"\xa3")
+        r2 = self.response_class("http://www.example.com", encoding='utf-8', body="\xa3")
         r3 = self.response_class("http://www.example.com", headers={"Content-type": ["text/html; charset=iso-8859-1"]}, body="\xa3")
         r4 = self.response_class("http://www.example.com", body="\xa2\xa3")
         r5 = self.response_class("http://www.example.com", headers={"Content-type": ["text/html; charset=None"]}, body="\xc2\xa3")
@@ -177,14 +177,14 @@ class TextResponseTest(BaseResponseTest):
         self.assertEqual(r5._headers_encoding(), None)
         self._assert_response_encoding(r5, "utf-8")
         assert r4._body_inferred_encoding() is not None and r4._body_inferred_encoding() != 'ascii'
-        self._assert_response_values(r1, 'utf-8', u"\xa3")
-        self._assert_response_values(r2, 'utf-8', u"\xa3")
-        self._assert_response_values(r3, 'iso-8859-1', u"\xa3")
-        self._assert_response_values(r6, 'gb18030', u"\u2015")
-        self._assert_response_values(r7, 'gb18030', u"\u2015")
+        self._assert_response_values(r1, 'utf-8', "\xa3")
+        self._assert_response_values(r2, 'utf-8', "\xa3")
+        self._assert_response_values(r3, 'iso-8859-1', "\xa3")
+        self._assert_response_values(r6, 'gb18030', "\u2015")
+        self._assert_response_values(r7, 'gb18030', "\u2015")
 
         # TextResponse (and subclasses) must be passed a encoding when instantiating with unicode bodies
-        self.assertRaises(TypeError, self.response_class, "http://www.example.com", body=u"\xa3")
+        self.assertRaises(TypeError, self.response_class, "http://www.example.com", body="\xa3")
 
     def test_declared_encoding_invalid(self):
         """Check that unknown declared encodings are ignored"""
@@ -192,21 +192,21 @@ class TextResponseTest(BaseResponseTest):
                                 headers={"Content-type": ["text/html; charset=UKNOWN"]},
                                 body="\xc2\xa3")
         self.assertEqual(r._declared_encoding(), None)
-        self._assert_response_values(r, 'utf-8', u"\xa3")
+        self._assert_response_values(r, 'utf-8', "\xa3")
 
     def test_utf16(self):
         """Test utf-16 because UnicodeDammit is known to have problems with"""
         r = self.response_class("http://www.example.com",
                                 body='\xff\xfeh\x00i\x00',
                                 encoding='utf-16')
-        self._assert_response_values(r, 'utf-16', u"hi")
+        self._assert_response_values(r, 'utf-16', "hi")
 
     def test_invalid_utf8_encoded_body_with_valid_utf8_BOM(self):
         r6 = self.response_class("http://www.example.com",
                                  headers={"Content-type": ["text/html; charset=utf-8"]},
                                  body="\xef\xbb\xbfWORD\xe3\xab")
         self.assertEqual(r6.encoding, 'utf-8')
-        self.assertEqual(r6.body_as_unicode(), u'WORD\ufffd\ufffd')
+        self.assertEqual(r6.body_as_unicode(), 'WORD\ufffd\ufffd')
 
     def test_bom_is_removed_from_body(self):
         # Inferring encoding from body also cache decoded body as sideeffect,
@@ -220,9 +220,9 @@ class TextResponseTest(BaseResponseTest):
         # Test response without content-type and BOM encoding
         response = self.response_class(url, body=body)
         self.assertEqual(response.encoding, 'utf-8')
-        self.assertEqual(response.body_as_unicode(), u'WORD')
+        self.assertEqual(response.body_as_unicode(), 'WORD')
         response = self.response_class(url, body=body)
-        self.assertEqual(response.body_as_unicode(), u'WORD')
+        self.assertEqual(response.body_as_unicode(), 'WORD')
         self.assertEqual(response.encoding, 'utf-8')
 
         # Body caching sideeffect isn't triggered when encoding is declared in
@@ -230,9 +230,9 @@ class TextResponseTest(BaseResponseTest):
         # body
         response = self.response_class(url, headers=headers, body=body)
         self.assertEqual(response.encoding, 'utf-8')
-        self.assertEqual(response.body_as_unicode(), u'WORD')
+        self.assertEqual(response.body_as_unicode(), 'WORD')
         response = self.response_class(url, headers=headers, body=body)
-        self.assertEqual(response.body_as_unicode(), u'WORD')
+        self.assertEqual(response.body_as_unicode(), 'WORD')
         self.assertEqual(response.encoding, 'utf-8')
 
     def test_replace_wrong_encoding(self):
@@ -240,14 +240,14 @@ class TextResponseTest(BaseResponseTest):
         r = self.response_class("http://www.example.com", encoding='utf-8', body='PREFIX\xe3\xabSUFFIX')
         # XXX: Policy for replacing invalid chars may suffer minor variations
         # but it should always contain the unicode replacement char (u'\ufffd')
-        assert u'\ufffd' in r.body_as_unicode(), repr(r.body_as_unicode())
-        assert u'PREFIX' in r.body_as_unicode(), repr(r.body_as_unicode())
-        assert u'SUFFIX' in r.body_as_unicode(), repr(r.body_as_unicode())
+        assert '\ufffd' in r.body_as_unicode(), repr(r.body_as_unicode())
+        assert 'PREFIX' in r.body_as_unicode(), repr(r.body_as_unicode())
+        assert 'SUFFIX' in r.body_as_unicode(), repr(r.body_as_unicode())
 
         # Do not destroy html tags due to encoding bugs
         r = self.response_class("http://example.com", encoding='utf-8', \
                 body='\xf0<span>value</span>')
-        assert u'<span>value</span>' in r.body_as_unicode(), repr(r.body_as_unicode())
+        assert '<span>value</span>' in r.body_as_unicode(), repr(r.body_as_unicode())
 
         # FIXME: This test should pass once we stop using BeautifulSoup's UnicodeDammit in TextResponse
         #r = self.response_class("http://www.example.com", body='PREFIX\xe3\xabSUFFIX')

@@ -6,7 +6,7 @@ import csv
 import pprint
 import marshal
 import json
-import cPickle as pickle
+import pickle as pickle
 from xml.sax.saxutils import XMLGenerator
 from scrapy.utils.serialize import ScrapyJSONEncoder
 from scrapy.item import BaseItem
@@ -29,7 +29,7 @@ class BaseItemExporter(object):
         self.export_empty_fields = options.pop('export_empty_fields', False)
         self.encoding = options.pop('encoding', 'utf-8')
         if not dont_fail and options:
-            raise TypeError("Unexpected options: %s" % ', '.join(options.keys()))
+            raise TypeError("Unexpected options: %s" % ', '.join(list(options.keys())))
 
     def export_item(self, item):
         raise NotImplementedError
@@ -45,7 +45,7 @@ class BaseItemExporter(object):
         pass
 
     def _to_str_if_unicode(self, value):
-        return value.encode(self.encoding) if isinstance(value, unicode) else value
+        return value.encode(self.encoding) if isinstance(value, str) else value
 
     def _get_serialized_fields(self, item, default_value=None, include_empty=None):
         """Return the fields to export as an iterable of tuples (name,
@@ -55,9 +55,9 @@ class BaseItemExporter(object):
             include_empty = self.export_empty_fields
         if self.fields_to_export is None:
             if include_empty:
-                field_iter = item.fields.iterkeys()
+                field_iter = iter(item.fields.keys())
             else:
-                field_iter = item.iterkeys()
+                field_iter = iter(item.keys())
         else:
             if include_empty:
                 field_iter = self.fields_to_export
@@ -135,7 +135,7 @@ class XmlItemExporter(BaseItemExporter):
     def _export_xml_field(self, name, serialized_value):
         self.xg.startElement(name, {})
         if hasattr(serialized_value, 'items'):
-            for subname, value in serialized_value.items():
+            for subname, value in list(serialized_value.items()):
                 self._export_xml_field(subname, value)
         elif hasattr(serialized_value, '__iter__'):
             for value in serialized_value:
@@ -175,7 +175,7 @@ class CsvItemExporter(BaseItemExporter):
     def _write_headers_and_set_fields_to_export(self, item):
         if self.include_headers_line:
             if not self.fields_to_export:
-                self.fields_to_export = item.fields.keys()
+                self.fields_to_export = list(item.fields.keys())
             self.csv_writer.writerow(self.fields_to_export)
 
 
@@ -231,7 +231,7 @@ class PythonItemExporter(BaseItemExporter):
         return self._to_str_if_unicode(value)
 
     def _serialize_dict(self, value):
-        for key, val in value.iteritems():
+        for key, val in value.items():
             yield key, self._serialize_value(val)
     
     def export_item(self, item):

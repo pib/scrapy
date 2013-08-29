@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import unittest
 
 from scrapy.mail import MailSender

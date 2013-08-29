@@ -10,8 +10,8 @@ class ItemTest(unittest.TestCase):
             name = Field()
 
         i = TestItem()
-        i['name'] = u'name'
-        self.assertEqual(i['name'], u'name')
+        i['name'] = 'name'
+        self.assertEqual(i['name'], 'name')
 
     def test_init(self):
         class TestItem(Item):
@@ -20,17 +20,17 @@ class ItemTest(unittest.TestCase):
         i = TestItem()
         self.assertRaises(KeyError, i.__getitem__, 'name')
 
-        i2 = TestItem(name=u'john doe')
-        self.assertEqual(i2['name'], u'john doe')
+        i2 = TestItem(name='john doe')
+        self.assertEqual(i2['name'], 'john doe')
 
-        i3 = TestItem({'name': u'john doe'})
-        self.assertEqual(i3['name'], u'john doe')
+        i3 = TestItem({'name': 'john doe'})
+        self.assertEqual(i3['name'], 'john doe')
 
         i4 = TestItem(i3)
-        self.assertEqual(i4['name'], u'john doe')
+        self.assertEqual(i4['name'], 'john doe')
 
-        self.assertRaises(KeyError, TestItem, {'name': u'john doe',
-                                               'other': u'foo'})
+        self.assertRaises(KeyError, TestItem, {'name': 'john doe',
+                                               'other': 'foo'})
 
     def test_invalid_field(self):
         class TestItem(Item):
@@ -46,7 +46,7 @@ class ItemTest(unittest.TestCase):
             number = Field()
 
         i = TestItem()
-        i['name'] = u'John Doe'
+        i['name'] = 'John Doe'
         i['number'] = 123
         itemrepr = repr(i)
         self.assertEqual(itemrepr,
@@ -90,9 +90,9 @@ class ItemTest(unittest.TestCase):
 
         i = TestItem()
         self.assertRaises(KeyError, i.get_name)
-        i['name'] = u'lala'
-        self.assertEqual(i.get_name(), u'lala')
-        i.change_name(u'other')
+        i['name'] = 'lala'
+        self.assertEqual(i.get_name(), 'lala')
+        i.change_name('other')
         self.assertEqual(i.get_name(), 'other')
 
     def test_metaclass(self):
@@ -102,14 +102,14 @@ class ItemTest(unittest.TestCase):
             values = Field()
 
         i = TestItem()
-        i['name'] = u'John'
-        self.assertEqual(i.keys(), ['name'])
-        self.assertEqual(i.values(), ['John'])
+        i['name'] = 'John'
+        self.assertEqual(list(i.keys()), ['name'])
+        self.assertEqual(list(i.values()), ['John'])
 
-        i['keys'] = u'Keys'
-        i['values'] = u'Values'
-        self.assertEqual(i.keys(), ['keys', 'values', 'name'])
-        self.assertEqual(i.values(), [u'Keys', u'Values', u'John'])
+        i['keys'] = 'Keys'
+        i['values'] = 'Values'
+        self.assertEqual(list(i.keys()), ['keys', 'values', 'name'])
+        self.assertEqual(list(i.values()), ['Keys', 'Values', 'John'])
 
     def test_metaclass_inheritance(self):
         class BaseItem(Item):
@@ -122,16 +122,16 @@ class ItemTest(unittest.TestCase):
 
         i = TestItem()
         i['keys'] = 3
-        self.assertEqual(i.keys(), ['keys'])
-        self.assertEqual(i.values(), [3])
+        self.assertEqual(list(i.keys()), ['keys'])
+        self.assertEqual(list(i.values()), [3])
 
     def test_to_dict(self):
         class TestItem(Item):
             name = Field()
 
         i = TestItem()
-        i['name'] = u'John'
-        self.assertEqual(dict(i), {'name': u'John'})
+        i['name'] = 'John'
+        self.assertEqual(dict(i), {'name': 'John'})
 
     def test_copy(self):
         class TestItem(Item):

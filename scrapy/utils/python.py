@@ -11,6 +11,7 @@ import inspect
 import weakref
 import errno
 from functools import wraps
+import collections
 try:
     from sgmllib import SGMLParser
 except ImportError:
@@ -79,7 +80,7 @@ def str_to_unicode(text, encoding=None, errors='strict'):
         encoding = 'utf-8'
     if isinstance(text, str):
         return text.decode(encoding, errors)
-    elif isinstance(text, unicode):
+    elif isinstance(text, str):
         return text
     else:
         raise TypeError('str_to_unicode must receive a str or unicode object, got %s' % type(text).__name__)
@@ -93,7 +94,7 @@ def unicode_to_str(text, encoding=None, errors='strict'):
 
     if encoding is None:
         encoding = 'utf-8'
-    if isinstance(text, unicode):
+    if isinstance(text, str):
         return text.encode(encoding, errors)
     elif isinstance(text, str):
         return text
@@ -122,7 +123,7 @@ def re_rsearch(pattern, text, chunk_size=1024):
             yield (text[offset:], offset)
         yield (text, 0)
 
-    pattern = re.compile(pattern) if isinstance(pattern, basestring) else pattern
+    pattern = re.compile(pattern) if isinstance(pattern, str) else pattern
     for chunk, offset in _chunk_iter():
         matches = [match for match in pattern.finditer(chunk)]
         if matches:
@@ -141,7 +142,7 @@ def memoizemethod_noargs(method):
         return cache[self]
     return new_method
 
-_BINARYCHARS = set(map(chr, range(32))) - set(["\0", "\t", "\n", "\r"])
+_BINARYCHARS = set(map(chr, list(range(32)))) - set(["\0", "\t", "\n", "\r"])
 
 def isbinarytext(text):
     """Return True if the given text is considered binary, or false
@@ -204,7 +205,7 @@ def get_spec(func):
 
     firstdefault = len(spec.args) - len(defaults)
     args = spec.args[:firstdefault]
-    kwargs = dict(zip(spec.args[firstdefault:], defaults))
+    kwargs = dict(list(zip(spec.args[firstdefault:], defaults)))
     return args, kwargs
 
 def equal_attributes(obj1, obj2, attributes):
@@ -215,7 +216,7 @@ def equal_attributes(obj1, obj2, attributes):
 
     for attr in attributes:
         # support callables like itemgetter
-        if callable(attr):
+        if isinstance(attr, collections.Callable):
             if not attr(obj1) == attr(obj2):
                 return False
         else:
@@ -249,10 +250,10 @@ def stringify_dict(dct_or_tuples, encoding='utf-8', keys_only=True):
     dict or a list of tuples, like any dict constructor supports.
     """
     d = {}
-    for k, v in dict(dct_or_tuples).iteritems():
-        k = k.encode(encoding) if isinstance(k, unicode) else k
+    for k, v in dict(dct_or_tuples).items():
+        k = k.encode(encoding) if isinstance(k, str) else k
         if not keys_only:
-            v = v.encode(encoding) if isinstance(v, unicode) else v
+            v = v.encode(encoding) if isinstance(v, str) else v
         d[k] = v
     return d
 
@@ -278,6 +279,6 @@ def retry_on_eintr(function, *args, **kw):
     while True:
         try:
             return function(*args, **kw)
-        except IOError, e:
+        except IOError as e:
             if e.errno != errno.EINTR:
                 raise

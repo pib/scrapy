@@ -11,7 +11,7 @@ class Link(object):
     __slots__ = ['url', 'text', 'fragment', 'nofollow']
 
     def __init__(self, url, text='', fragment='', nofollow=False):
-        if isinstance(url, unicode):
+        if isinstance(url, str):
             import warnings
             warnings.warn("Do not instantiate Link objects with unicode urls. " \
                 "Assuming utf-8 encoding (which could be wrong)")

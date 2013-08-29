@@ -577,7 +577,7 @@ class _IRequestEncoderFactory(Interface):
 
 
 
-UNKNOWN_LENGTH = u"twisted.web.iweb.UNKNOWN_LENGTH"
+UNKNOWN_LENGTH = "twisted.web.iweb.UNKNOWN_LENGTH"
 
 __all__ = [
     "ICredentialFactory", "IRequest",

@@ -3,7 +3,7 @@ Some spiders used for testing and benchmarking
 """
 
 import time
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from scrapy.spider import BaseSpider
 from scrapy.http import Request

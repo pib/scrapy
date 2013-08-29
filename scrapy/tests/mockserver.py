@@ -1,4 +1,4 @@
-import sys, time, random, urllib
+import sys, time, random, urllib.request, urllib.parse, urllib.error
 from subprocess import Popen, PIPE
 from twisted.web.server import Site, NOT_DONE_YET
 from twisted.web.resource import Resource
@@ -38,7 +38,7 @@ class Follow(DeferMixin, Resource):
         if order == "rand":
             nlist = [random.randint(1, total) for _ in range(show)]
         else:  # order == "desc"
-            nlist = range(n, max(n - show, 0), -1)
+            nlist = list(range(n, max(n - show, 0), -1))
 
         lag = random.random() * maxlatency
         self.deferRequest(request, lag, self.renderRequest, request, nlist)
@@ -49,7 +49,7 @@ class Follow(DeferMixin, Resource):
         args = request.args.copy()
         for nl in nlist:
             args["n"] = [str(nl)]
-            argstr = urllib.urlencode(args, doseq=True)
+            argstr = urllib.parse.urlencode(args, doseq=True)
             s += "<a href='/follow?%s'>follow %d</a><br>" % (argstr, nl)
         s += """</body>"""
         request.write(s)
@@ -143,6 +143,6 @@ if __name__ == "__main__":
     port = reactor.listenTCP(8998, factory)
     def print_listening():
         h = port.getHost()
-        print "Mock server running at http://%s:%d" % (h.host, h.port)
+        print("Mock server running at http://%s:%d" % (h.host, h.port))
     reactor.callWhenRunning(print_listening)
     reactor.run()

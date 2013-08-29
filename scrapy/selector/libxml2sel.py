@@ -56,32 +56,32 @@ class XPathSelector(object_ref):
         return extract_regex(regex, self.extract())
 
     def extract(self):
-        if isinstance(self.xmlNode, basestring):
-            text = unicode(self.xmlNode, 'utf-8', errors='ignore')
+        if isinstance(self.xmlNode, str):
+            text = str(self.xmlNode, 'utf-8', errors='ignore')
         elif hasattr(self.xmlNode, 'serialize'):
             if isinstance(self.xmlNode, libxml2.xmlDoc):
                 data = self.xmlNode.getRootElement().serialize('utf-8')
-                text = unicode(data, 'utf-8', errors='ignore') if data else u''
+                text = str(data, 'utf-8', errors='ignore') if data else ''
             elif isinstance(self.xmlNode, libxml2.xmlAttr): 
                 # serialization doesn't work sometimes for xmlAttr types
-                text = unicode(self.xmlNode.content, 'utf-8', errors='ignore')
+                text = str(self.xmlNode.content, 'utf-8', errors='ignore')
             else:
                 data = self.xmlNode.serialize('utf-8')
-                text = unicode(data, 'utf-8', errors='ignore') if data else u''
+                text = str(data, 'utf-8', errors='ignore') if data else ''
         else:
             try:
-                text = unicode(self.xmlNode, 'utf-8', errors='ignore')
+                text = str(self.xmlNode, 'utf-8', errors='ignore')
             except TypeError:  # catched when self.xmlNode is a float - see tests
-                text = unicode(self.xmlNode)
+                text = str(self.xmlNode)
         return text
 
     def extract_unquoted(self):
         """Get unescaped contents from the text node (no entities, no CDATA)"""
         # TODO: this function should be deprecated. but what would be use instead?
         if self.select('self::text()'):
-            return unicode(self.xmlNode.getContent(), 'utf-8', errors='ignore')
+            return str(self.xmlNode.getContent(), 'utf-8', errors='ignore')
         else:
-            return u''
+            return ''
 
     def register_namespace(self, prefix, uri):
         self.doc.xpathContext.xpathRegisterNs(prefix, uri)
@@ -89,7 +89,7 @@ class XPathSelector(object_ref):
     def _get_libxml2_doc(self, response):
         return xmlDoc_from_html(response)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.extract())
 
     def __str__(self):

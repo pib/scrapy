@@ -30,15 +30,15 @@ class DjangoItemTest(unittest.TestCase):
 
     def test_base(self):
         i = BasePersonItem()
-        self.assertEqual(i.fields.keys(), ['age', 'name'])
+        self.assertEqual(list(i.fields.keys()), ['age', 'name'])
 
     def test_new_fields(self):
         i = NewFieldPersonItem()
-        self.assertEqual(i.fields.keys(), ['age', 'other', 'name'])
+        self.assertEqual(list(i.fields.keys()), ['age', 'other', 'name'])
 
     def test_override_field(self):
         i = OverrideFieldPersonItem()
-        self.assertEqual(i.fields.keys(), ['age', 'name'])
+        self.assertEqual(list(i.fields.keys()), ['age', 'name'])
 
     def test_custom_primary_key_field(self):
         """
@@ -46,11 +46,11 @@ class DjangoItemTest(unittest.TestCase):
         in the field list.
         """
         i = IdentifiedPersonItem()
-        self.assertEqual(i.fields.keys(), ['age', 'identifier', 'name'])
+        self.assertEqual(list(i.fields.keys()), ['age', 'identifier', 'name'])
 
     def test_save(self):
         i = BasePersonItem()
-        self.assertEqual(i.fields.keys(), ['age', 'name'])
+        self.assertEqual(list(i.fields.keys()), ['age', 'name'])
 
         i['name'] = 'John'
         i['age'] = '22'
@@ -77,8 +77,8 @@ class DjangoItemTest(unittest.TestCase):
         self.assertFalse(i.is_valid())
         self.assertEqual(
             {
-                'age': [u'This field cannot be null.'],
-                'name': [u'Ensure this value has at most 255 characters (it has 300).']
+                'age': ['This field cannot be null.'],
+                'name': ['Ensure this value has at most 255 characters (it has 300).']
             },
             i.errors)
 

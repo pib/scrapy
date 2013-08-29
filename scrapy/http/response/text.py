@@ -22,7 +22,7 @@ class TextResponse(Response):
         super(TextResponse, self).__init__(*args, **kwargs)
 
     def _set_url(self, url):
-        if isinstance(url, unicode):
+        if isinstance(url, str):
             if self.encoding is None:
                 raise TypeError('Cannot convert unicode url - %s has no encoding' %
                     type(self).__name__)
@@ -32,7 +32,7 @@ class TextResponse(Response):
 
     def _set_body(self, body):
         self._body = ''
-        if isinstance(body, unicode):
+        if isinstance(body, str):
             if self.encoding is None:
                 raise TypeError('Cannot convert unicode body - %s has no encoding' %
                     type(self).__name__)

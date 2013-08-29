@@ -9,6 +9,7 @@ from scrapy import signals
 from scrapy.interfaces import ISpiderManager
 from scrapy.utils.misc import walk_modules
 from scrapy.utils.spider import iter_spider_classes
+import collections
 
 
 class SpiderManager(object):
@@ -48,13 +49,13 @@ class SpiderManager(object):
             return spcls(**spider_kwargs)
 
     def find_by_request(self, request):
-        return [name for name, cls in self._spiders.iteritems()
+        return [name for name, cls in self._spiders.items()
             if cls.handles_request(request)]
 
     def list(self):
-        return self._spiders.keys()
+        return list(self._spiders.keys())
 
     def close_spider(self, spider, reason):
         closed = getattr(spider, 'closed', None)
-        if callable(closed):
+        if isinstance(closed, collections.Callable):
             return closed(reason)

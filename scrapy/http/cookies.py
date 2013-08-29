@@ -1,5 +1,5 @@
 import time
-from cookielib import CookieJar as _CookieJar, DefaultCookiePolicy, IPV4_RE
+from http.cookiejar import CookieJar as _CookieJar, DefaultCookiePolicy, IPV4_RE
 from scrapy.utils.httpobj import urlparse_cached
 
 
@@ -143,7 +143,7 @@ class WrappedRequest(object):
         return self.request.headers.get(name, default)
 
     def header_items(self):
-        return self.request.headers.items()
+        return list(self.request.headers.items())
 
     def add_unredirected_header(self, name, value):
         self.request.headers.appendlist(name, value)

@@ -11,26 +11,26 @@ __doctests__ = ['scrapy.utils.python']
 class UtilsPythonTestCase(unittest.TestCase):
     def test_str_to_unicode(self):
         # converting an utf-8 encoded string to unicode
-        self.assertEqual(str_to_unicode('lel\xc3\xb1e'), u'lel\xf1e')
+        self.assertEqual(str_to_unicode('lel\xc3\xb1e'), 'lel\xf1e')
 
         # converting a latin-1 encoded string to unicode
-        self.assertEqual(str_to_unicode('lel\xf1e', 'latin-1'), u'lel\xf1e')
+        self.assertEqual(str_to_unicode('lel\xf1e', 'latin-1'), 'lel\xf1e')
 
         # converting a unicode to unicode should return the same object
-        self.assertEqual(str_to_unicode(u'\xf1e\xf1e\xf1e'), u'\xf1e\xf1e\xf1e')
+        self.assertEqual(str_to_unicode('\xf1e\xf1e\xf1e'), '\xf1e\xf1e\xf1e')
 
         # converting a strange object should raise TypeError
         self.assertRaises(TypeError, str_to_unicode, 423)
 
         # check errors argument works
-        assert u'\ufffd' in str_to_unicode('a\xedb', 'utf-8', errors='replace')
+        assert '\ufffd' in str_to_unicode('a\xedb', 'utf-8', errors='replace')
 
     def test_unicode_to_str(self):
         # converting a unicode object to an utf-8 encoded string
-        self.assertEqual(unicode_to_str(u'\xa3 49'), '\xc2\xa3 49')
+        self.assertEqual(unicode_to_str('\xa3 49'), '\xc2\xa3 49')
 
         # converting a unicode object to a latin-1 encoded string
-        self.assertEqual(unicode_to_str(u'\xa3 49', 'latin-1'), '\xa3 49')
+        self.assertEqual(unicode_to_str('\xa3 49', 'latin-1'), '\xa3 49')
 
         # converting a regular string to string should return the same object
         self.assertEqual(unicode_to_str('lel\xf1e'), 'lel\xf1e')
@@ -39,7 +39,7 @@ class UtilsPythonTestCase(unittest.TestCase):
         self.assertRaises(TypeError, unicode_to_str, unittest)
 
         # check errors argument works
-        assert '?' in unicode_to_str(u'a\ufffdb', 'latin-1', errors='replace')
+        assert '?' in unicode_to_str('a\ufffdb', 'latin-1', errors='replace')
 
     def test_memoizemethod_noargs(self):
         class A(object):
@@ -64,7 +64,7 @@ class UtilsPythonTestCase(unittest.TestCase):
         assert not isbinarytext("hello")
 
         # utf-16 strings contain null bytes
-        assert not isbinarytext(u"hello".encode('utf-16')) 
+        assert not isbinarytext("hello".encode('utf-16')) 
 
         # one with encoding
         assert not isbinarytext("<div>Price \xa3</div>")
@@ -121,7 +121,7 @@ class UtilsPythonTestCase(unittest.TestCase):
     def test_weakkeycache(self):
         class _Weakme(object): pass
         _values = count()
-        wk = WeakKeyCache(lambda k: _values.next())
+        wk = WeakKeyCache(lambda k: next(_values))
         k = _Weakme()
         v = wk[k]
         self.assertEqual(v, wk[k])
@@ -131,28 +131,28 @@ class UtilsPythonTestCase(unittest.TestCase):
         self.assertFalse(len(wk._weakdict))
 
     def test_stringify_dict(self):
-        d = {'a': 123, u'b': 'c', u'd': u'e', object(): u'e'}
+        d = {'a': 123, 'b': 'c', 'd': 'e', object(): 'e'}
         d2 = stringify_dict(d, keys_only=False)
         self.failUnlessEqual(d, d2)
         self.failIf(d is d2) # shouldn't modify in place
-        self.failIf(any(isinstance(x, unicode) for x in d2.keys()))
-        self.failIf(any(isinstance(x, unicode) for x in d2.values()))
+        self.failIf(any(isinstance(x, str) for x in list(d2.keys())))
+        self.failIf(any(isinstance(x, str) for x in list(d2.values())))
 
     def test_stringify_dict_tuples(self):
-        tuples = [('a', 123), (u'b', 'c'), (u'd', u'e'), (object(), u'e')]
+        tuples = [('a', 123), ('b', 'c'), ('d', 'e'), (object(), 'e')]
         d = dict(tuples)
         d2 = stringify_dict(tuples, keys_only=False)
         self.failUnlessEqual(d, d2)
         self.failIf(d is d2) # shouldn't modify in place
-        self.failIf(any(isinstance(x, unicode) for x in d2.keys()), d2.keys())
-        self.failIf(any(isinstance(x, unicode) for x in d2.values()))
+        self.failIf(any(isinstance(x, str) for x in list(d2.keys())), list(d2.keys()))
+        self.failIf(any(isinstance(x, str) for x in list(d2.values())))
 
     def test_stringify_dict_keys_only(self):
-        d = {'a': 123, u'b': 'c', u'd': u'e', object(): u'e'}
+        d = {'a': 123, 'b': 'c', 'd': 'e', object(): 'e'}
         d2 = stringify_dict(d)
         self.failUnlessEqual(d, d2)
         self.failIf(d is d2) # shouldn't modify in place
-        self.failIf(any(isinstance(x, unicode) for x in d2.keys()))
+        self.failIf(any(isinstance(x, str) for x in list(d2.keys())))
 
     def test_get_func_args(self):
         def f1(a, b, c):
@@ -184,7 +184,7 @@ class UtilsPythonTestCase(unittest.TestCase):
         self.assertEqual(get_func_args(object), [])
 
         # TODO: how do we fix this to return the actual argument names?
-        self.assertEqual(get_func_args(unicode.split), [])
+        self.assertEqual(get_func_args(str.split), [])
         self.assertEqual(get_func_args(" ".join), [])
 
 if __name__ == "__main__":

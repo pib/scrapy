@@ -17,7 +17,7 @@ class DefaultHeadersMiddleware(object):
         return cls(crawler.settings)
 
     def _default_headers(self, spider):
-        return self._settings.get('DEFAULT_REQUEST_HEADERS').items()
+        return list(self._settings.get('DEFAULT_REQUEST_HEADERS').items())
 
     def process_request(self, request, spider):
         for k, v in self._headers[spider]:

@@ -40,7 +40,7 @@ def mustbe_deferred(f, *args, **kw):
     # FIXME: Hack to avoid introspecting tracebacks. This to speed up
     # processing of IgnoreRequest errors which are, by far, the most common
     # exception in Scrapy - see #125
-    except IgnoreRequest, e:
+    except IgnoreRequest as e:
         return defer_fail(failure.Failure(e))
     except:
         return defer_fail(failure.Failure())
@@ -55,7 +55,7 @@ def parallel(iterable, count, callable, *args, **named):
     """
     coop = task.Cooperator()
     work = (callable(elem, *args, **named) for elem in iterable)
-    return defer.DeferredList([coop.coiterate(work) for i in xrange(count)])
+    return defer.DeferredList([coop.coiterate(work) for i in range(count)])
 
 def process_chain(callbacks, input, *a, **kw):
     """Return a Deferred built by chaining the given callbacks"""
@@ -93,7 +93,7 @@ def iter_errback(iterable, errback, *a, **kw):
     it = iter(iterable)
     while 1:
         try:
-            yield it.next()
+            yield next(it)
         except StopIteration:
             break
         except:

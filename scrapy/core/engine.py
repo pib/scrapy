@@ -108,10 +108,10 @@ class ExecutionEngine(object):
 
         if slot.start_requests and not self._needs_backout(spider):
             try:
-                request = slot.start_requests.next()
+                request = next(slot.start_requests)
             except StopIteration:
                 slot.start_requests = None
-            except Exception, exc:
+            except Exception as exc:
                 log.err(None, 'Obtaining request from start requests', \
                         spider=spider)
             else:
@@ -161,7 +161,7 @@ class ExecutionEngine(object):
 
     @property
     def open_spiders(self):
-        return self.slots.keys()
+        return list(self.slots.keys())
 
     def has_capacity(self):
         """Does the engine have capacity to handle more spiders"""

@@ -41,7 +41,7 @@ class StackTraceDump(object):
     def _thread_stacks(self):
         id2name = dict((th.ident, th.name) for th in threading.enumerate())
         dumps = ''
-        for id_, frame in sys._current_frames().items():
+        for id_, frame in list(sys._current_frames().items()):
             name = id2name.get(id_, '')
             dump = ''.join(traceback.format_stack(frame))
             dumps += "# Thread: {0}({1})\n{2}\n".format(name, id_, dump)
